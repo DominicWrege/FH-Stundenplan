@@ -108,40 +108,39 @@
         },
         filter: function (items) {
             if (items != null) {
-                var thisTmp = this;
-                return items.filter(function(item) {      
-                    if (!thisTmp.filterByGroup && !thisTmp.qdl) {
-                          return item.weekday == thisTmp.weekDay && item.name.indexOf("QdL") == -1;;
-                    }  else if (!thisTmp.qdl && thisTmp.filterByGroup) {
-                        return item.weekday == thisTmp.weekDay  && checkGroup(thisTmp.currentGroupLetter, item.studentSet, thisTmp.allGroupLetters) && item.name.indexOf("QdL") == -1;
-                    }  else if (thisTmp.qdl && !thisTmp.filterByGroup) {
-                        return item.weekday == thisTmp.weekDay ;
-                    }  else if (thisTmp.qdl && thisTmp.filterByGroup) {
-                        return item.weekday == thisTmp.weekDay && checkGroup(thisTmp.currentGroupLetter, item.studentSet, thisTmp.allGroupLetters);
+                return items.filter(item => {    
+                    if (!this.filterByGroup && !this.qdl) {
+                          return item.weekday == this.weekDay && item.name.indexOf("QdL") == -1;
+                    }  else if (!this.qdl && this.filterByGroup) {
+                        return item.weekday == this.weekDay  && checkGroup(this.currentGroupLetter, item.studentSet, this.allGroupLetters) && item.name.indexOf("QdL") == -1;
+                    }  else if (this.qdl && !this.filterByGroup) {
+                        return item.weekday == this.weekDay;
+                    }  else if (this.qdl && this.filterByGroup) {
+                        return item.weekday == this.weekDay && checkGroup(this.currentGroupLetter, item.studentSet, this.allGroupLetters);
                     }  else{
-                        item.weekday == thisTmp.weekDay && checkGroup(thisTmp.currentGroupLetter, item.studentSet, thisTmp.allGroupLetters) && item.name.indexOf("QdL") == -1;
+                        return item.weekday == this.weekDay && checkGroup(this.currentGroupLetter, item.studentSet, this.allGroupLetters) && item.name.indexOf("QdL") == -1;
                     }              
                      // Filter      
                 });
             }
-                function checkGroup(userGroupLetter, rangeGroupLetter, allGroupLetters){
-                    var letters = rangeGroupLetter.split("-");
-                    var firstLetter = letters[0].substring(0,1);
+            function checkGroup(userGroupLetter, rangeGroupLetter, allGroupLetters){
+                var letters = rangeGroupLetter.split("-");
+                var firstLetter = letters[0].substring(0,1);
 
-                    if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
-                        return true;
-                    }else if(letters[1] == null){
-                          return false;
-                    }
-                    var lastLetter = letters[1].substring(0,1);
-                    var firstLetterAscii = firstLetter.charCodeAt(0);
-                    var lastLetterAcii = lastLetter.charCodeAt(0);
-                    var userGroupLetterAscii = userGroupLetter.charCodeAt(0);
-                    if( userGroupLetterAscii >= firstLetterAscii && userGroupLetterAscii <= lastLetterAcii){
-                        return true;
-                    }
-                    return false;                
+                if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
+                    return true;
+                }else if(letters[1] == null){
+                      return false;
                 }
+                var lastLetter = letters[1].substring(0,1);
+                var firstLetterAscii = firstLetter.charCodeAt(0);
+                var lastLetterAcii = lastLetter.charCodeAt(0);
+                var userGroupLetterAscii = userGroupLetter.charCodeAt(0);
+                if( userGroupLetterAscii >= firstLetterAscii && userGroupLetterAscii <= lastLetterAcii){
+                    return true;
+                }
+                return false;                
+            }
         },
     });
     </script>
