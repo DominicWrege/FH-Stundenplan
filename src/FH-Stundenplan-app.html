@@ -1,50 +1,51 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<dom-module id="fh-stundenplan-app">
 
-<dom-module id="FH-Stundenplan-app">
     <template>
-            <iron-ajax id="ajax"
-                 auto
-                 url="[[baseFeedUrl]]",
-                 params='{"Accept": "application/json"}'
-                 handle-as="json"
-                 last-response="{{responseRaw}}"
-                 >   
-            </iron-ajax> 
-            <paper-dialog id="settingsDialog">
-                <h2>Einstellungen</h2>                
-                <paper-dropdown-menu id="Studiengang" label="Studiengang">
-                    <paper-menu id="courseMenu" class="dropdown-content" selected="{{course}}"  attr-for-selected="value">
-                        <template is="dom-repeat" items="{{response}}" as="courses">
-                            <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade" >
-                                <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">{{courses.name}} {{itemGrade.grade}}</paper-item>
-                            </template>
-                        </template>
-                    </paper-menu>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu label="Gruppenbuchstabe" >
-                    <paper-menu id="groupLetterMenu" class="dropdown-content" as="item" selected="{{currentGroupLetter}}" 
+        <iron-ajax id="ajax"
+             auto
+             url="[[baseFeedUrl]]",
+             params='{"Accept": "application/json"}'
+             handle-as="json"
+             last-response="{{responseRaw}}">   
+        </iron-ajax> 
+        <paper-dialog id="settingsDialog">
+            <h2>Einstellungen</h2>                
+             <paper-dropdown-menu id="Studiengang" label="Studiengang">
+                <paper-listbox id="courseMenu" slot="dropdown-content" selected="{{course}}" 
                                 attr-for-selected="value">
-                        <template is="dom-repeat" items="{{_allGroupLetters}}" initial-count="8">
-                           <paper-item  value="{{item}}">{{item}}</paper-item>
+                    <template is="dom-repeat" items="{{response}}" as="courses">
+                        <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade" >
+                            <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">{{courses.name}} {{itemGrade.grade}}</paper-item>
                         </template>
-                    </paper-menu>
-                </paper-dropdown-menu>
-                <paper-toggle-button id="filterByGroup" checked="{{filterByGroup}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
-                <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen</paper-toggle-button><br>
-                <paper-button id="impressumButton" on-tap="showImpressumDialog">Impressum</paper-button>
-            </paper-dialog>
-            <paper-dialog id="impressumDialog">
-                <h2>Impressum</h2>
-                <div>
-                    <p>Dominic Wrege</p>
-                    <p>Combrinkstr.8</p>
-                    <p>59229 Ahlen</p>
-                    <p>dominicwrege@me.com</p>
-                    <p>02388/3701</p>
-                </div>
-            </paper-dialog>
+                    </template>
+                </paper-listbox>
+            </paper-dropdown-menu>
+            <paper-dropdown-menu label="Gruppenbuchstabe" > 
+                <paper-listbox slot="dropdown-content" id="groupLetterMenu"  
+                               selected="{{currentGroupLetter}}" attr-for-selected="value">
+                    <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
+                       <paper-item value="{{item}}">{{item}}</paper-item>
+                    </template>
+                </paper-listbox>
+            </paper-dropdown-menu>
+            <paper-toggle-button id="filterByGroup" checked="{{filterByGroup}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
+            <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen</paper-toggle-button><br>
+            <paper-button id="impressumButton" on-tap="showImpressumDialog">Impressum</paper-button>
+        </paper-dialog>
+        <paper-dialog id="impressumDialog">
+            <h2>Impressum</h2>
+            <div>
+                <p>Dominic Wrege</p>
+                <p>Combrinkstr.8</p>
+                <p>59229 Ahlen</p>
+                <p>dominicwrege@me.com</p>
+                <p>02388/3701</p>
+            </div>
+        </paper-dialog>
         <app-drawer-layout fullbleed>
-            <app-header-layout has-scrolling-region>
+            <app-header-layout has-scrolling-region >
                 <app-header fixed effects="waterfall">
                     <app-toolbar id="toolbarTitle" style="height: 44px;">
                         <div main-title>FH-DO Stundenplan</div>
@@ -60,188 +61,203 @@
                         </paper-tabs>
                     </app-toolbar>
                 </app-header>
-                <stundenplan-feed id="feed" course-id="{{course}}" qdl="{{qdl}}" current-group-letter="{{currentGroupLetter}}"  
+                    <stundenplan-feed id="feed" course-id="{{course}}" qdl="{{qdl}}" current-group-letter="{{currentGroupLetter}}"  
                                   feed-events-url="[[feedEventsUrl]]" week-day="[[day]]" filter-by-group="{{filterByGroup}}">                         
                 </stundenplan-feed>
             </app-header-layout>   
         <app-drawer-layout>  
 <!--         <platinum-sw-register 
-                      skip-waiting
-                      clients-claim
-                      auto-register>
-        <platinum-sw-import-script href="../sw-import.js"></platinum-sw-import-script>
-        <platinum-sw-cache default-cache-strategy="networkFirst" precache-file="../sw-precache-config.js"></platinum-sw-cache>
-        </platinum-sw-register> -->
-    </template>
+                  skip-waiting
+                  clients-claim
+                  auto-register>
+    <platinum-sw-import-script href="../sw-import.js"></platinum-sw-import-script>
+    <platinum-sw-cache default-cache-strategy="networkFirst" precache-file="../sw-precache-config.js"></platinum-sw-cache>
+    </platinum-sw-register> -->
 <!--     <style include="shared-styles"></style> -->
-    <style>
-        :host {
-            display: block;
-        }
-        app-header {
-            background-color: #F44336;
-            color: #fff;
-        }
+        <style>
+            :host {
+                display: block;
+            }
+            app-header {
+                background-color: #F44336;
+                color: #fff;
+            }
 
-        #tabs{
-            width: 100%;
-            max-width: 750px;
-            margin: 0 auto;
-        }
-        .tab{
-            min-width: 64px;
-        }
-        #group{
-            width: 80px;
-            color: #FFF;
-        }
-        paper-dialog{
-            max-width: 420px;
-            width: 90%;
-            min-width: 200px;
+            #tabs{
+                width: 100%;
+                max-width: 750px;
+                margin: 0 auto;
+            }
+            .tab{
+                min-width: 64px;
+            }
+            #group{
+                width: 80px;
+                color: #FFF;
+            }
+            paper-dialog{
+                max-width: 420px;
+                width: 90%;
+                min-width: 200px;
 
-        }
-        .paper-dialog-0 > * {
-            margin-top: 20px;
-            padding: 0;
-            margin-left: 24px;
-            margin-right: 24px;
-        }
-        #impressumDialog{
-            margin-top: 5px;
-            line-height: 10px;
-            font-size: small;
-        }
-        #settingsDialog{
-            margin-top: 5px;
-            min-height: 280px;
-        }
-        #Studiengang{
-            width: 84%;
-        }
-        paper-toggle-button{
-            display: inline-flex;
-        }
-        #groupLetterMenu{
-                width: 75px;
-        }
-    </style>
+            }
+            .paper-dialog-0 > * {
+                margin-top: 20px;
+                padding: 0;
+                margin-left: 24px;
+                margin-right: 24px;
+            }
+            #impressumDialog{
+                margin-top: 5px;
+                line-height: 10px;
+                font-size: small;
+            }
+            #settingsDialog{
+                margin-top: 5px;
+                min-height: 280px;
+            }
+            #Studiengang{
+                width: 84%;
+            }
+            paper-toggle-button{
+                display: inline-flex;
+            }
+            #groupLetterMenu{
+                    width: 75px;
+            }
+        </style>
+
+    </template>
 
     <script>
-    Polymer({
+        class FhStundenplanApp extends Polymer.Element{
 
-        is: 'FH-Stundenplan-app',
+            static get is() {
+                return 'fh-stundenplan-app';
+            }
 
-        properties: {
-            day:{
-                type: String,
-                observer: "reload"
-            },
-            _allGroupLetters:{
-                type: Array,
-                value: ["A", "B", "C","D","E","F","G","H","I","J","K",
-                        "L","M","N","O","P","Q","L", "R","S","T","U",
-                        "V","W","Y","Z"]
-            },
-            response: {
-                type: Array,
-                
-            },
-            responseRaw: {
-                type: Object,
-                observer: "handleResponse"
-            },
-            baseFeedUrl:{
-                type: String,
-                value: "https://ws.inf.fh-dortmund.de/timetable/current/rest/CourseOfStudy/"
-            },
-        },
+            connectedCallback() {
+                super.connectedCallback();
+            }
 
-        showSettings: function(){
-            this.$.settingsDialog.open();
-        },
-        ready: function(){
-            this.listen(this.$.tabs, "iron-select", "reload");
-            this.listen(this.$.settingsDialog, "iron-overlay-opened", "settingsDialogOpened");
-            if (localStorage.feedEventsUrl == null ) {
+            static get properties() {
+                return{
+                    day:{
+                        type: String,
+                        observer: "reload"
+                    },
+                    _allGroupLetters:{
+                        type: Array,
+                        value: ["A", "B", "C","D","E","F","G","H","I","J","K",
+                                "L","M","N","O","P","Q","L", "R","S","T","U",
+                                "V","W","Y","Z"]
+                    },
+                    response: {
+                        type: Array,
+                        
+                    },
+                    responseRaw: {
+                        type: Object,
+                        observer: "handleResponse"
+                    },
+                    baseFeedUrl:{
+                        type: String,
+                        value: "https://ws.inf.fh-dortmund.de/timetable/current/rest/CourseOfStudy/"
+                    },
+                }   
+            }
+
+            showSettings(){
                 this.$.settingsDialog.open();
-            }else{
-                this.feedEventsUrl = localStorage.feedEventsUrl;
+                this.settingsDialogOpened();
             }
-   
-            if (localStorage.currentGroupLetter != null) {
-                this.currentGroupLetter = localStorage.currentGroupLetter;
-            }
-            if (localStorage.qdl != null) {
-                this.qdl = localStorage.qdl == "true";
-            }
-            if (localStorage.filterByGroup != null) {
-                this.filterByGroup = localStorage.filterByGroup == "true";
-            }
-        },
-        handleResponse: function(){
-
-            var arrKeys = [],
-                arrResponseTemp = [],
-                myObjekt = {},
-                i = 0;
-            var toDay = new Date();
-            var tmpDay = toDay.getDay();
-            if (tmpDay == 0 || tmpDay == 6) {
-                this.day = "Mon";
-            }else{
-                this.day = toDay.toDateString().split(" ")[0];;
-            }
-            this.$.tabs.select(this.day);
-            if (this.responseRaw != null){
-                arrKeys = Object.keys(this.responseRaw);
-                for(var item in this.responseRaw){
-                    myObjekt = {key: "a", name: "b", grades: [{"grade":"","modified":0}]};
-                    myObjekt.name = this.responseRaw[item].name;
-                    myObjekt.grades = this.responseRaw[item].grades.slice();
-                    myObjekt.key = arrKeys[i++];
-                    arrResponseTemp.push(myObjekt); 
+            ready(){
+                super.ready();
+                //window.addEventListener(this.$.tabs, "iron-select", this.reload);
+                //window.addEventListener("iron-overlay-opened", this.settingsDialogOpened);
+                if (localStorage.feedEventsUrl == null ) {
+                    //this.$.settingsDialog.open();
+                }else{
+                    this.feedEventsUrl = localStorage.feedEventsUrl;
                 }
-                this.response = arrResponseTemp;
-            } 
-        },
-        qdlChanged: function(){
-            localStorage.qdl = this.qdl;
-            this.reload();
-        },
-        settingsChanged: function(){
-            if (this.course != null && this.currentGroupLetter != null ) {
-                localStorage.currentGroupLetter = this.currentGroupLetter;
-                localStorage.currentCourse = this.course;
-                var feedEventsUrl = this.baseFeedUrl + this.course.split(" ")[0] + "/" + this.course.split(" ")[1] + "/Events";
-                localStorage.feedEventsUrl = feedEventsUrl; 
-                this.feedEventsUrl = feedEventsUrl;        
+       
+                if (localStorage.currentGroupLetter != null) {
+                    this.currentGroupLetter = localStorage.currentGroupLetter;
+                }
+                if (localStorage.qdl != null) {
+                    this.qdl = localStorage.qdl == "true";
+                }
+                if (localStorage.filterByGroup != null) {
+                    this.filterByGroup = localStorage.filterByGroup == "true";
+                }
+            }
+            handleResponse(){
+                console.log(this.responseRaw);
+                var arrKeys = [],
+                    arrResponseTemp = [],
+                    myObjekt = {},
+                    i = 0;
+                var toDay = new Date();
+                var tmpDay = toDay.getDay();
+                if (tmpDay == 0 || tmpDay == 6) {
+                    this.day = "Mon";
+                }else{
+                    this.day = toDay.toDateString().split(" ")[0];;
+                }
+                //this.$.tabs.select(this.day);
+                if (this.responseRaw != null){
+                    arrKeys = Object.keys(this.responseRaw);
+                    for(var item in this.responseRaw){
+                        myObjekt = {key: "a", name: "b", grades: [{"grade":"","modified":0}]};
+                        myObjekt.name = this.responseRaw[item].name;
+                        myObjekt.grades = this.responseRaw[item].grades.slice();
+                        myObjekt.key = arrKeys[i++];
+                        arrResponseTemp.push(myObjekt); 
+                    }
+                    console.log(arrResponseTemp);
+                    this.response = arrResponseTemp;
+                } 
+            }
+            qdlChanged(){
+                localStorage.qdl = this.qdl;
                 this.reload();
             }
+            settingsChanged(){
+                console.log(this.course);
+                if (this.course != null && this.currentGroupLetter != null ) {
+                    localStorage.currentGroupLetter = this.currentGroupLetter;
+                    localStorage.currentCourse = this.course;
+                    var feedEventsUrl = this.baseFeedUrl + this.course.split(" ")[0] + "/" + this.course.split(" ")[1] + "/Events";
+                    localStorage.feedEventsUrl = feedEventsUrl; 
+                    this.feedEventsUrl = feedEventsUrl;        
+                    this.reload();
+                }
 
-        },
-        showImpressumDialog: function(){
-            this.$.settingsDialog.close();
-            this.$.impressumDialog.open();
-        },
-        settingsDialogOpened(){
-            this.listen(this.$.groupLetterMenu, "iron-select", "settingsChanged");
-            this.listen(this.$.courseMenu, "iron-select", "settingsChanged");
-            this.listen(this.$.qdlButton, "change", "qdlChanged");
-            this.listen(this.$.filterByGroup, "change", "filterByGroupChanged");
-            this.handleResponse();
-            if(localStorage.currentCourse != null){
-                this.course = localStorage.currentCourse;
             }
-        },
-        reload: function(){
-            this.fire('reload', {kicked: true});
-        },
-        filterByGroupChanged : function(){
-            localStorage.filterByGroup = this.filterByGroup;
-            this.reload();
-        },
- 
-    });
+            showImpressumDialog(){
+                this.$.settingsDialog.close();
+                this.$.impressumDialog.open();
+            }
+            settingsDialogOpened(){
+                console.log("das"); 
+                console.log(this.$.groupLetterMenu);
+                this.$.groupLetterMenu.addEventListener("iron-select", this.settingsChanged);
+                this.$.courseMenu.addEventListener("iron-select", this.settingsChanged);
+                this.$.qdlButton.addEventListener("change", this.qdlChanged);
+                this.$.filterByGroup.addEventListener("change", this.filterByGroupChanged);
+                this.handleResponse();
+                if(localStorage.currentCourse != null){
+                    this.course = localStorage.currentCourse;   
+                }
+            }
+            reload(){
+                 this.dispatchEvent(new CustomEvent('reload'));
+            }
+            filterByGroupChanged(){
+                localStorage.filterByGroup = this.filterByGroup;
+                this.reload();
+            }
+        }        
+        window.customElements.define('fh-stundenplan-app', FhStundenplanApp);
     </script>
 </dom-module>

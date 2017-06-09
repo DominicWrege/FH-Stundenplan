@@ -8,7 +8,7 @@
 
         <link rel="icon" href="/icons/favicon.ico">
 
-        <meta name="description" content="FH Stundenplan description">
+        <meta name="description" content="FH Stundenplan Web-App">
         <link rel="stylesheet" href="style.css">
         <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#F44336" />
@@ -25,11 +25,13 @@
         <link rel="apple-touch-icon" sizes="144x144" href="icons/icon144x144.png">
         <link rel="apple-touch-icon" sizes="192x192" href="icons/icon192x192.png">
 
-        <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+        <!--<script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>-->
+        <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+        <link rel="import" href="bower_components/polymer/polymer.html">
 
         <link rel="import" href="src/elements.html">
     </head>
     <body>
-        <FH-Stundenplan-app id="app"></FH-Stundenplan-app>
+        <fh-stundenplan-app id="app"></fh-stundenplan-app>
     </body>
 </html>
