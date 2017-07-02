@@ -1,126 +1,96 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
 <dom-module id="stundenplan-feed">
-    <template>
-        <iron-ajax id="ajax"
+
+	<template>
+		<style>
+		    :host {
+                display: block;
+                font-size: small;
+            }
+            iron-list{
+            	margin: 0 auto;
+				margin-top: 3%;
+				margin-bottom: 5%;
+				max-width: 650px;
+
+            }
+            @media (max-width: 700px) {
+                iron-list{
+                    margin-top: 0%;
+                }
+            }
+			
+		</style>
+		<iron-ajax id="ajax"
              auto
              url="[[feedEventsUrl]]"
              params='{"Accept": "application/json"}'
              handle-as="json"
              last-response="{{response}}"
-            >    
+        >    
         </iron-ajax>
-        <iron-list id="list" scroll-target="document" items="[[filter(response)]]" as="item" >
-            <template>
-  
-                    <paper-material elevation="1">
-          <!--        <paper-card elevation="1" animated-shadow="true"> -->
+		<iron-list id="liste" scroll-target="document" items="[[filter(response)]]" as="item">
+			<template>
+				<paper-card elevation="1" animated-shadow="false">
+					<div class="card-content">
+						<table> 
+							<tr>
+								<td id="title"><b>[[item.courseType]] [[item.name]]</b></td>
+							</tr>
+							<tr>
+								<td>[[formatTimePretty(item.timeBegin)]] - [[formatTimePretty(item.timeEnd)]] | [[item.roomId]]</td>
+							</tr>
+							<tr>
+								<td> [[item.studentSet]] | [[item.lecturerName]] </td>
+							</tr>                        
+						</table>    
+					</div>
+				</paper-card>
+			</template>
+		</iron-list>
 
-                   <div class="card-content">
-                       <table> 
-                            <tr>
-                                <td id="title"><b>[[item.courseType]] [[item.name]]</b></td>
-                            </tr>
-                            <tr>
-                                <td>[[formatTimePretty(item.timeBegin)]] - [[formatTimePretty(item.timeEnd)]] | [[item.roomId]]</td>
-                            </tr>
-                            <tr>
-                                <td> [[item.studentSet]] | [[item.lecturerName]] </td>
-                            </tr>                        
-                        </table>    
-                   </div> 
-    
-<!--                  </paper-card>   -->                      
-                    </paper-material>
-             
-            </template>    
-        </iron-list>
+	</template>
 
-    <!-- <style include="shared-styles"></style> -->
-        <style>
-            :host {
-                font-size: small;
-
-            }
-
-            paper-material{
-                margin-top: 14px;
-                margin-right: 14px;
-                margin-left: 14px;
-                padding: 14px;
-                background: red;
-            }
-            
-            paper-card{
-                margin-top: 30px;
-                margin-right: 14px;
-                margin-left: 14px;   
-            }
-            #title{
-                padding-right: 14px;
-            }
-
-            #list{
-                max-width: 650px;
-                margin: 0 auto;
-                padding-bottom: 35px;
-            }
-        </style>
-    </template>
-
-    <script>
-
-        class StundenplanFeed extends Polymer.Element{ 
-
-            static get is() {
-                return 'stundenplan-feed';
-            }
-
-            connectedCallback() {
-                super.connectedCallback();
-                var thisTmp = this;
-                document.querySelector("#app").addEventListener("reload", function (e) {
-                    thisTmp.reloadList();
-                })
-                this.reloadList();
-            }
-            
-            static get properties() {
-                return{
-                    response:{
-                        type: Array,
-                    },
-                    weekDay:{
-                        type: String,
-                        value:"Mon",
-                    },
-                    currentGroupLetter: {
-                        type: String,
-                    },
-
-                    feedEventsUrl:{
-                        type: String
-                    },  
-                    qdl: {
+	<script>
+		class StundenplanFeed extends Polymer.Element{
+			static get is(){ return "stundenplan-feed";}
+			static get properties() {
+	            return {
+	                name: {
+	                	type: String,
+	                	value: "stundenplan-feed"
+	                },
+	                response:{
+	                	type: Array
+	                },
+	                weekDay:{
+	                	type: String,
+	                	value: "Mon"
+	                },
+	                currentGroupLetter:{
+	                	type: String
+	                },
+	                feeEventsUrl:{
+	                	type: String
+	                },
+	                qdl: {
                         type: Boolean,
                         value: false,
                     },
                     filterByGroup: {
                         type: Boolean
                     } 
-                }       
-            }
-            reloadList(){
-                if (this.response != null) {
-                        var tmp = this.response;
-                  
-                        this.response = null;
-                        this.response = tmp;
+	            }
+        	};
 
-                }
+        	connectedCallback() {
+                super.connectedCallback();
+                document.querySelector("#app").addEventListener("reload", () => this.reloadList())
+                //this.reloadList();
             }
-            formatTimePretty(time){
+
+        	formatTimePretty(time){
                 var timeFormated;
                 if(time.substring(0,1) == 1){
                      timeFormated = time.substring(0,2) + ":" + time.substring(2,4) ;
@@ -135,39 +105,44 @@
                         if (!this.filterByGroup && !this.qdl) {
                               return item.weekday == this.weekDay && item.name.indexOf("QdL") == -1;
                         }  else if (!this.qdl && this.filterByGroup) {
-                            return item.weekday == this.weekDay  && checkGroup(this.currentGroupLetter, item.studentSet, this.allGroupLetters) && item.name.indexOf("QdL") == -1;
+                            return item.weekday == this.weekDay  && this.checkGroup(this.currentGroupLetter, item.studentSet) && item.name.indexOf("QdL") == -1;
                         }  else if (this.qdl && !this.filterByGroup) {
                             return item.weekday == this.weekDay;
                         }  else if (this.qdl && this.filterByGroup) {
-                            return item.weekday == this.weekDay && checkGroup(this.currentGroupLetter, item.studentSet, this.allGroupLetters);
+                            return item.weekday == this.weekDay && this.checkGroup(this.currentGroupLetter, item.studentSet);
                         }  else{
-                            return item.weekday == this.weekDay && checkGroup(this.currentGroupLetter, item.studentSet, this.allGroupLetters) && item.name.indexOf("QdL") == -1;
-                        }              
-                         // Filter      
+                            return item.weekday == this.weekDay && this.checkGroup(this.currentGroupLetter, item.studentSet) && item.name.indexOf("QdL") == -1;
+                        }                  
                     });
                 }
-                function checkGroup(userGroupLetter, rangeGroupLetter, allGroupLetters){
+            } 
+            checkGroup(userGroupLetter, rangeGroupLetter){
                     var letters = rangeGroupLetter.split("-");
                     var firstLetter = letters[0].substring(0,1);
-
                     if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
                         return true;
-                    }else if(letters[1] == null){
+                    } else if(letters[1] == null){
                           return false;
                     }
                     var lastLetter = letters[1].substring(0,1);
                     var firstLetterAscii = firstLetter.charCodeAt(0);
                     var lastLetterAcii = lastLetter.charCodeAt(0);
                     var userGroupLetterAscii = userGroupLetter.charCodeAt(0);
-                    if( userGroupLetterAscii >= firstLetterAscii && userGroupLetterAscii <= lastLetterAcii){
+                    if( userGroupLetterAscii > firstLetterAscii && userGroupLetterAscii < lastLetterAcii){
                         return true;
                     }
                     return false;                
+        	}   
+        	reloadList(){
+                if (this.response != null) {
+                    var tmp = this.response;
+                    this.response = null;
+                    this.response = tmp;
                 }
             }
-        }
+		}
+		window.customElements.define(StundenplanFeed.is, StundenplanFeed);
+	</script>
 
-        window.customElements.define('stundenplan-feed', StundenplanFeed);
-    </script>
+
 </dom-module>
- --> -->
