@@ -54,7 +54,7 @@
              last-response="{{responseRaw}}">   
         </iron-ajax> 
         <app-header-layout has-scrolling-region="true" fullbleed>        
-            <app-header slot="header" fixed effects="waterfall">
+            <app-header slot="header" effects="waterfall" fixed>
                 <app-toolbar>
                     <div main-title>FH-Stundenplan</div>
                     <paper-icon-button on-click="showSettings" icon="settings"></paper-icon-button>
@@ -156,8 +156,8 @@
         constructor() {
             super();
         }
-        ready(){
-            super.ready();
+        connectedCallback(){
+            super.connectedCallback();
             Polymer.RenderStatus.afterNextRender(this, function() {
                 if (localStorage.feedEventsUrl == null ) {
                     this.$.settingsDialog.open();
@@ -214,7 +214,6 @@
                 localStorage.currentGroupLetter = this.currentGroupLetter;
                 localStorage.currentCourse = this.course;
                 var feedEventsUrl = this.baseFeedUrl + this.course.split(" ")[0] + "/" + this.course.split(" ")[1] + "/Events";
-                console.log(feedEventsUrl);
                 localStorage.feedEventsUrl = feedEventsUrl; 
                 this.feedEventsUrl = feedEventsUrl;        
                 this.reload();
