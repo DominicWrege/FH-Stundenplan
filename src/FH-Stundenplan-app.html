@@ -5,7 +5,6 @@
         <style>
             :host {
                 display: block;
-                background: #f1f1f1;
                 min-width: 300px;
             }
             app-header {
@@ -25,8 +24,10 @@
                 min-height: 280px;
                 max-width: 420px;
                 min-width: 200px;
-                left: 0;
-                right: 0;
+                left: 1.5%;
+                top: 21%;
+                margin-top: 20px auto;
+                right: 1.5%;
                 margin-right: auto;
                 margin-left: auto;
                 padding-bottom: 30px;
@@ -53,6 +54,29 @@
              handle-as="json"
              last-response="{{responseRaw}}">   
         </iron-ajax> 
+                        <paper-dialog id="settingsDialog">
+                    <h2>Einstellungen</h2>
+                    <paper-dropdown-menu id="Studiengang" label="Studiengang">
+                        <paper-listbox id="courseMenu" slot="dropdown-content" selected="{{course}}" 
+                                        attr-for-selected="value">
+                            <template is="dom-repeat" items="{{response}}" as="courses">
+                                <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade" >
+                                    <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">{{courses.name}} {{itemGrade.grade}}</paper-item>
+                                </template>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu label="Gruppenbuchstabe" > 
+                        <paper-listbox slot="dropdown-content" id="groupLetterMenu"  
+                                       selected="{{currentGroupLetter}}" attr-for-selected="value">
+                            <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
+                               <paper-item value="{{item}}">{{item}}</paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-toggle-button id="filterByGroup" checked="{{filterByGroup}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
+                    <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen</paper-toggle-button><br>
+                </paper-dialog>
         <app-header-layout has-scrolling-region="true" fullbleed>        
             <app-header slot="header" effects="waterfall" fixed>
                 <app-toolbar>
@@ -70,29 +94,6 @@
                 </app-toolbar>
             </app-header>
             <div>
-                <paper-dialog id="settingsDialog">
-                        <h2>Einstellungen</h2>
-                        <paper-dropdown-menu id="Studiengang" label="Studiengang">
-                            <paper-listbox id="courseMenu" slot="dropdown-content" selected="{{course}}" 
-                                            attr-for-selected="value">
-                                <template is="dom-repeat" items="{{response}}" as="courses">
-                                    <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade" >
-                                        <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">{{courses.name}} {{itemGrade.grade}}</paper-item>
-                                    </template>
-                                </template>
-                            </paper-listbox>
-                        </paper-dropdown-menu>
-                        <paper-dropdown-menu label="Gruppenbuchstabe" > 
-                            <paper-listbox slot="dropdown-content" id="groupLetterMenu"  
-                                           selected="{{currentGroupLetter}}" attr-for-selected="value">
-                                <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
-                                   <paper-item value="{{item}}">{{item}}</paper-item>
-                                </template>
-                            </paper-listbox>
-                        </paper-dropdown-menu>
-                        <paper-toggle-button id="filterByGroup" checked="{{filterByGroup}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
-                        <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen</paper-toggle-button><br>
-                </paper-dialog>
                 <stundenplan-feed course-id="{{course}}" qdl="{{qdl}}" current-group-letter="{{currentGroupLetter}}"  
                                       feed-events-url="[[feedEventsUrl]]" week-day="[[day]]" filter-by-group="{{filterByGroup}}">
                 </stundenplan-feed>
@@ -137,10 +138,12 @@
                 },
                 filterByGroup:{
                     type: Boolean,
+                    value: false,
                     observer: "filterByGroupChanged"
                 },
                 qdl:{
                     type: Boolean,
+                    value: false,
                     observer: "qdlChanged"
                 },
                 course:{
@@ -153,11 +156,8 @@
                 }
             };
         }
-        constructor() {
-            super();
-        }
-        connectedCallback(){
-            super.connectedCallback();
+        ready(){
+            super.ready();
             Polymer.RenderStatus.afterNextRender(this, function() {
                 if (localStorage.feedEventsUrl == null ) {
                     this.$.settingsDialog.open();
@@ -204,12 +204,11 @@
             this.$.settingsDialog.open();
             this.settingsDialogOpened();
         }
-        qdlChanged(){
-            localStorage.qdl = this.qdl;
+        qdlChanged(newValue, oldValue){
+            localStorage.qdl = newValue;
             this.reload();
         }
         settingsChanged(){
-            //console.log(this.currentGroupLetter);
             if (this.course != null && this.currentGroupLetter != null ) {
                 localStorage.currentGroupLetter = this.currentGroupLetter;
                 localStorage.currentCourse = this.course;
@@ -234,7 +233,7 @@
         }
         filterByGroupChanged(newValue, oldValue){
             localStorage.filterByGroup = newValue;
-            this.reload()
+            this.reload();
         }
     }
 

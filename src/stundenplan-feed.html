@@ -79,14 +79,15 @@
                         value: false,
                     },
                     filterByGroup: {
-                        type: Boolean
+                        type: Boolean,
+                        value: false,
                     } 
 	            }
         	};
 
         	connectedCallback() {
                 super.connectedCallback();
-                document.querySelector("#app").addEventListener("reload", () => this.reloadList())
+                document.querySelector("#app").addEventListener("reload", () => this.reloadList()); 
                 //this.reloadList();
             }
 
@@ -117,21 +118,21 @@
                 }
             } 
             checkGroup(userGroupLetter, rangeGroupLetter){
-                    var letters = rangeGroupLetter.split("-");
-                    var firstLetter = letters[0].substring(0,1);
-                    if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
-                        return true;
-                    } else if(letters[1] == null){
-                          return false;
-                    }
-                    var lastLetter = letters[1].substring(0,1);
-                    var firstLetterAscii = firstLetter.charCodeAt(0);
-                    var lastLetterAcii = lastLetter.charCodeAt(0);
-                    var userGroupLetterAscii = userGroupLetter.charCodeAt(0);
-                    if( userGroupLetterAscii > firstLetterAscii && userGroupLetterAscii < lastLetterAcii){
-                        return true;
-                    }
-                    return false;                
+                var letters = rangeGroupLetter.split("-");
+                var firstLetter = letters[0].substring(0,1);
+                if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
+                    return true;
+                } else if(letters[1] == null){
+                      return false;
+                }
+                var lastLetter = letters[1].substring(0,1);
+                var firstLetterAscii = firstLetter.charCodeAt(0);
+                var lastLetterAcii = lastLetter.charCodeAt(0);
+                var userGroupLetterAscii = userGroupLetter.charCodeAt(0);
+                if( userGroupLetterAscii > firstLetterAscii && userGroupLetterAscii < lastLetterAcii){
+                    return true;
+                }
+                return false;                
         	}   
         	reloadList(){
                 if (this.response != null) {
