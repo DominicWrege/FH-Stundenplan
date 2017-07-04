@@ -26,7 +26,6 @@
                 min-width: 200px;
                 left: 1.5%;
                 top: 21%;
-                margin-top: 20px auto;
                 right: 1.5%;
                 margin-right: auto;
                 margin-left: auto;
@@ -54,29 +53,29 @@
              handle-as="json"
              last-response="{{responseRaw}}">   
         </iron-ajax> 
-                        <paper-dialog id="settingsDialog">
-                    <h2>Einstellungen</h2>
-                    <paper-dropdown-menu id="Studiengang" label="Studiengang">
-                        <paper-listbox id="courseMenu" slot="dropdown-content" selected="{{course}}" 
-                                        attr-for-selected="value">
-                            <template is="dom-repeat" items="{{response}}" as="courses">
-                                <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade" >
-                                    <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">{{courses.name}} {{itemGrade.grade}}</paper-item>
-                                </template>
-                            </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu label="Gruppenbuchstabe" > 
-                        <paper-listbox slot="dropdown-content" id="groupLetterMenu"  
-                                       selected="{{currentGroupLetter}}" attr-for-selected="value">
-                            <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
-                               <paper-item value="{{item}}">{{item}}</paper-item>
-                            </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-toggle-button id="filterByGroup" checked="{{filterByGroup}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
-                    <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen</paper-toggle-button><br>
-                </paper-dialog>
+        <paper-dialog id="settingsDialog">
+            <h2>Einstellungen</h2>
+            <paper-dropdown-menu id="Studiengang" label="Studiengang">
+                <paper-listbox id="courseMenu" slot="dropdown-content" selected="{{course}}" 
+                                attr-for-selected="value">
+                    <template is="dom-repeat" items="{{response}}" as="courses">
+                        <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade" >
+                            <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">{{courses.name}} {{itemGrade.grade}}</paper-item>
+                        </template>
+                    </template>
+                </paper-listbox>
+            </paper-dropdown-menu>
+            <paper-dropdown-menu label="Gruppenbuchstabe" > 
+                <paper-listbox slot="dropdown-content" id="groupLetterMenu"  
+                               selected="{{currentGroupLetter}}" attr-for-selected="value">
+                    <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
+                       <paper-item value="{{item}}">{{item}}</paper-item>
+                    </template>
+                </paper-listbox>
+            </paper-dropdown-menu>
+            <paper-toggle-button id="filterByGroup" checked="{{filterByGroup}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
+            <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen</paper-toggle-button><br>
+        </paper-dialog>
         <app-header-layout has-scrolling-region="true" fullbleed>        
             <app-header slot="header" effects="waterfall" fixed>
                 <app-toolbar>
