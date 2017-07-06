@@ -7,16 +7,18 @@
 		    :host {
                 display: block;
                 font-size: small;
+                margin: 0 auto;
+                margin-top: 3%;
+                margin-bottom: 5%;
+                max-width: 650px;
             }
-            iron-list{
-            	margin: 0 auto;
-				margin-top: 3%;
-				margin-bottom: 5%;
-				max-width: 650px;
-
+            paper-material{
+                display: block;
+                padding: 16px;
+                background-color: #ffffff;
             }
             @media (max-width: 700px) {
-                iron-list{
+                :host{
                     margin-top: 0%;
                 }
             }
@@ -27,31 +29,28 @@
              url="[[feedEventsUrl]]"
              params='{"Accept": "application/json"}'
              handle-as="json"
-             last-response="{{response}}"
-        >    
+             last-response="{{response}}" >    
         </iron-ajax>
-		<iron-list id="liste" scroll-target="document" items="[[filter(response)]]" as="item">
-			<template>
-				<paper-card elevation="1" animated-shadow="false">
-					<div class="card-content">
-						<table> 
-							<tr>
-								<td id="title"><b>[[item.courseType]] [[item.name]]</b></td>
-							</tr>
-							<tr>
-								<td>[[formatTimePretty(item.timeBegin)]] - [[formatTimePretty(item.timeEnd)]] | [[item.roomId]]</td>
-							</tr>
-							<tr>
-								<td> [[item.studentSet]] | [[item.lecturerName]] </td>
-							</tr>                        
-						</table>    
-					</div>
-				</paper-card>
+		<!-- <iron-list id="liste" scroll-target="document" > -->
+        <div id="liste">
+			<template is="dom-repeat" items="[[filter(response)]]" as="item">
+				<paper-material elevation="1" >
+					<table> 
+						<tr>
+							<td><b>[[item.courseType]] [[item.name]]</b></td>
+						</tr>
+						<tr>
+							<td>[[formatTimePretty(item.timeBegin)]] - [[formatTimePretty(item.timeEnd)]] | [[item.roomId]]</td>
+						</tr>
+						<tr>
+							<td>[[item.studentSet]] | [[item.lecturerName]]</td>
+						</tr>                        
+					</table>    
+                </paper-material>
 			</template>
-		</iron-list>
-
+        </div>    
+		<!-- </iron-list> -->
 	</template>
-
 	<script>
 		class StundenplanFeed extends Polymer.Element{
 			static get is(){ return "stundenplan-feed";}
@@ -62,11 +61,12 @@
 	                	value: "stundenplan-feed"
 	                },
 	                response:{
-	                	type: Array
+	                	type: Array,
 	                },
 	                weekDay:{
 	                	type: String,
-	                	value: "Mon"
+	                	value: "Mon",
+                        observer:"reloadList"
 	                },
 	                currentGroupLetter:{
 	                	type: String
@@ -77,11 +77,13 @@
 	                qdl: {
                         type: Boolean,
                         value: false,
+                        observer:"reloadList"
                     },
                     filterByGroup: {
                         type: Boolean,
                         value: false,
-                    } 
+                        observer:"reloadList"
+                    }
 	            }
         	};
 
@@ -89,10 +91,10 @@
                 super.connectedCallback();
                 document.querySelector("#app").addEventListener("reload", () => this.reloadList()); 
                 //this.reloadList();
-            }
 
+            }
         	formatTimePretty(time){
-                var timeFormated;
+                let timeFormated;
                 if(time.substring(0,1) == 1){
                      timeFormated = time.substring(0,2) + ":" + time.substring(2,4) ;
                 }else{
@@ -102,43 +104,43 @@
             }
             filter(items) {
                 if (items != null) {
-                    return items.filter(item => {    
-                        if (!this.filterByGroup && !this.qdl) {
-                              return item.weekday == this.weekDay && item.name.indexOf("QdL") == -1;
-                        }  else if (!this.qdl && this.filterByGroup) {
+                    return items.filter(item => {  
+                        if (!this.filterByGroup && !this.qdl)
+                            return item.weekday == this.weekDay && item.name.indexOf("QdL") == -1;
+                        else if (!this.qdl && this.filterByGroup) 
                             return item.weekday == this.weekDay  && this.checkGroup(this.currentGroupLetter, item.studentSet) && item.name.indexOf("QdL") == -1;
-                        }  else if (this.qdl && !this.filterByGroup) {
+                        else if (this.qdl && !this.filterByGroup) 
                             return item.weekday == this.weekDay;
-                        }  else if (this.qdl && this.filterByGroup) {
-                            return item.weekday == this.weekDay && this.checkGroup(this.currentGroupLetter, item.studentSet);
-                        }  else{
+                        else
                             return item.weekday == this.weekDay && this.checkGroup(this.currentGroupLetter, item.studentSet) && item.name.indexOf("QdL") == -1;
-                        }                  
                     });
                 }
             } 
             checkGroup(userGroupLetter, rangeGroupLetter){
-                var letters = rangeGroupLetter.split("-");
-                var firstLetter = letters[0].substring(0,1);
+                let letters = rangeGroupLetter.split("-");
+                let firstLetter = letters[0].substring(0,1);
+
                 if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
                     return true;
-                } else if(letters[1] == null){
+                }else if(letters[1] == null){
                       return false;
                 }
-                var lastLetter = letters[1].substring(0,1);
-                var firstLetterAscii = firstLetter.charCodeAt(0);
-                var lastLetterAcii = lastLetter.charCodeAt(0);
-                var userGroupLetterAscii = userGroupLetter.charCodeAt(0);
-                if( userGroupLetterAscii > firstLetterAscii && userGroupLetterAscii < lastLetterAcii){
+                let lastLetter = letters[1].substring(0,1);
+                let firstLetterAscii = firstLetter.charCodeAt(0);
+                let lastLetterAcii = lastLetter.charCodeAt(0);
+                let userGroupLetterAscii = userGroupLetter.charCodeAt(0);
+                if( userGroupLetterAscii >= firstLetterAscii && userGroupLetterAscii <= lastLetterAcii){
                     return true;
                 }
                 return false;                
         	}   
         	reloadList(){
                 if (this.response != null) {
-                    var tmp = this.response;
-                    this.response = null;
+                    let tmp = [];
+                    tmp = this.response;
+                    this.response = [];
                     this.response = tmp;
+
                 }
             }
 		}

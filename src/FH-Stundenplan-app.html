@@ -109,10 +109,6 @@
         static get is() { return "fh-stundenplan-app"; }
         static get properties() {
             return {
-                day:{
-                    type: String,
-                    observer: "reload"
-                },
                 name: {
                     type: String,
                     value: "fh-stundenplan-app"
@@ -135,16 +131,6 @@
                                 "L","M","N","O","P","Q","L", "R","S","T","U",
                                 "V","W","Y","Z"]
                 },
-                filterByGroup:{
-                    type: Boolean,
-                    value: false,
-                    observer: "filterByGroupChanged"
-                },
-                qdl:{
-                    type: Boolean,
-                    value: false,
-                    observer: "qdlChanged"
-                },
                 course:{
                     type: String,
                     observer: "settingsChanged"
@@ -155,12 +141,21 @@
                 }
             };
         }
+
         ready(){
             super.ready();
             Polymer.RenderStatus.afterNextRender(this, function() {
                 if (localStorage.feedEventsUrl == null ) {
                     this.$.settingsDialog.open();
                 }
+                let toDay = new Date();
+                let tmpDay = toDay.getDay();
+                if (tmpDay == 0 || tmpDay == 6) {
+                    this.$.tabs.selected = "Mon";
+                }else{
+                    this.$.tabs.selected = toDay.toDateString().split(" ")[0];;
+                }
+
             });
             if(localStorage.feedEventsUrl != null){
                     this.feedEventsUrl = localStorage.feedEventsUrl;
@@ -176,45 +171,35 @@
             }
         }
         handleResponse(){
-            var arrKeys = [],
+            let arrKeys = [],
                 arrResponseTemp = [],
                 myObjekt = {},
-                i = 0;
-            var toDay = new Date();
-            var tmpDay = toDay.getDay();
-            if (tmpDay == 0 || tmpDay == 6) {
-                this.day = "Mon";
-            }else{
-                this.day = toDay.toDateString().split(" ")[0];;
-            }
+                i = 0;  
             if (this.responseRaw != null){
                 arrKeys = Object.keys(this.responseRaw);
                 for(var item in this.responseRaw){
-                    myObjekt = {key: "a", name: "b", grades: [{"grade":"","modified":0}]};
+                    myObjekt = {key: "a", name: "b", grades: [{"grade":"c","modified":0}]};
                     myObjekt.name = this.responseRaw[item].name;
                     myObjekt.grades = this.responseRaw[item].grades.slice();
                     myObjekt.key = arrKeys[i++];
                     arrResponseTemp.push(myObjekt); 
                 }
                 this.response = arrResponseTemp;
+                //localStorage.responseCache = 
             } 
         }
         showSettings(){
             this.$.settingsDialog.open();
             this.settingsDialogOpened();
         }
-        qdlChanged(newValue, oldValue){
-            localStorage.qdl = newValue;
-            this.reload();
-        }
         settingsChanged(){
             if (this.course != null && this.currentGroupLetter != null ) {
                 localStorage.currentGroupLetter = this.currentGroupLetter;
                 localStorage.currentCourse = this.course;
-                var feedEventsUrl = this.baseFeedUrl + this.course.split(" ")[0] + "/" + this.course.split(" ")[1] + "/Events";
+                let feedEventsUrl = this.baseFeedUrl + this.course.split(" ")[0] + "/" + this.course.split(" ")[1] + "/Events";
                 localStorage.feedEventsUrl = feedEventsUrl; 
                 this.feedEventsUrl = feedEventsUrl;        
-                this.reload();
+                this.dispatchEvent(new CustomEvent('reload'));
             }
         }
         showImpressumDialog(){
@@ -226,13 +211,6 @@
             if(localStorage.currentCourse != null){
                 this.course = localStorage.currentCourse;   
             }
-        }
-        reload(){
-            this.dispatchEvent(new CustomEvent('reload'));
-        }
-        filterByGroupChanged(newValue, oldValue){
-            localStorage.filterByGroup = newValue;
-            this.reload();
         }
     }
 
