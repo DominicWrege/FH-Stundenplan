@@ -1,0 +1,62 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="stundenplan-settings">
+    <template>
+        <style>
+             :host {
+                display: block;
+            }
+
+            #Studiengang {
+                width: 84%;
+            }
+
+            #group {
+                width: 80px;
+                color: #FFF;
+            }
+
+            #groupLetterMenu {
+                width: 75px;
+            }
+
+            #gruppenbuchstabe {
+                margin-bottom: 24px;
+            }
+
+            paper-toggle-button {
+                display: inline-flex;
+                margin-bottom: 16px;
+            }
+        </style>
+        <h2>Einstellungen</h2>
+        <paper-dropdown-menu id="Studiengang" label="Studiengang">
+            <paper-listbox id="courseMenu" slot="dropdown-content" selected="{{course}}" attr-for-selected="value">
+                <template is="dom-repeat" items="[[handleResponse(responseRaw)]]" as="courses">
+                    <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade">
+                        <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">
+                            {{courses.name}} {{itemGrade.grade}}
+                        </paper-item>
+                    </template>
+                </template>
+            </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
+            <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
+                <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
+                    <paper-item value="{{item}}">{{item}}</paper-item>
+                </template>
+            </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-toggle-button id="filterByGroup" checked="{{group}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
+        <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen
+        </paper-toggle-button><br>
+        <iron-ajax id="ajax" 
+            auto url="[[url]]" 
+            params='{"Accept": "application/json"}' 
+            handle-as="json" 
+            last-response="{{responseRaw}}">
+        </iron-ajax>
+    </template>
+    <script src="stundenplan-settings.js"></script>
+</dom-module>

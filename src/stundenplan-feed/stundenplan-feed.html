@@ -1,0 +1,57 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="stundenplan-feed">
+
+    <template>
+        <style>
+             :host {
+                display: block;
+                font-size: smaller;
+                margin: 0 auto;
+                margin-top: 3%;
+                margin-bottom: 5%;
+                max-width: 650px;
+            }
+
+            span {
+                padding-left: 7px;
+            }
+
+            paper-material {
+                display: block;
+                padding: 16px;
+                background-color: #ffffff;
+            }
+
+            @media (max-width: 650px) {
+                 :host {
+                    margin-top: 0;
+                }
+            }
+        </style>
+        <iron-ajax id="ajax" 
+            auto url="[[feedEventsUrl]]" 
+            params='{"Accept": "application/json"}' 
+            handle-as="json" 
+            last-response="{{response}}">
+        </iron-ajax>
+        <!-- <iron-list id="liste" scroll-target="document" > -->
+        <template is="dom-repeat" items="[[filter(response)]]" as="item">
+            <paper-material elevation="1">
+                <table>
+                    <tr>
+                        <td><b>[[item.courseType]] [[item.name]]</b></td>
+                    </tr>
+                    <tr>
+                        <td>[[formatTimePretty(item.timeBegin)]] - [[formatTimePretty(item.timeEnd)]] <span></span>| <span>[[item.roomId]]</span></td>
+                    </tr>
+                    <tr>
+                        <td>[[item.studentSet]] <span></span>| <span>[[item.lecturerName]]</span></td>
+                    </tr>
+                </table>
+            </paper-material>
+        </template>
+        <!-- </iron-list> -->
+    </template>
+    <script src="stundenplan-feed.js"></script>
+</dom-module>

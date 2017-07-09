@@ -1,0 +1,84 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="fh-stundenplan-app">
+    <template>
+        <style>
+             :host {
+                display: block;
+                min-width: 300px;
+            }
+
+            app-header {
+                background-color: #F44336;
+                color: #fff;
+            }
+
+            paper-tabs {
+                width: 100%;
+                max-width: 750px;
+                margin: 0 auto;
+            }
+
+            paper-tabs paper-tab {
+                min-width: 54px;
+            }
+
+            #tabsToolbar {
+                align-items: flex-end;
+                display: flex;
+                padding-bottom: 2px;
+                padding-left: 1.5%;
+                padding-right: 1.5%;
+            }
+
+            app-toolbar {
+                height: 64px;
+            }
+
+            @media(max-width: 650px) {
+                app-toolbar {
+                    height: 52px;
+                }
+            }
+
+            paper-dialog {
+                position: absolute;
+                min-height: 280px;
+                max-width: 420px;
+                min-width: 200px;
+                left: 1.5%;
+                top: 21%;
+                right: 1.5%;
+                margin-right: auto;
+                margin-left: auto;
+            }
+        </style>
+        <paper-dialog id="settingsDialog">
+            <stundenplan-settings id="settings" on-feed="handleFeed" url="[[baseFeedUrl]]" on-filter="handleFilter">
+            </stundenplan-settings>
+        </paper-dialog>
+        <app-header-layout has-scrolling-region="true" fullbleed>
+            <app-header slot="header" effects="waterfall" fixed>
+                <app-toolbar>
+                    <div main-title>FH-Stundenplan</div>
+                    <paper-icon-button on-click="showSettings" icon="settings"></paper-icon-button>
+                </app-toolbar>
+                <app-toolbar id="tabsToolbar">
+                    <paper-tabs id="tabs" selected="{{day}}" autoselect-delay="0" no-slide autoselect hide-scroll-buttons="true" scrollable fit-container="true"
+                        attr-for-selected="value">
+                        <paper-tab value="Mon">Montag</paper-tab>
+                        <paper-tab value="Tue">Dienstag</paper-tab>
+                        <paper-tab value="Wed">Mittwoch</paper-tab>
+                        <paper-tab value="Thu">Donnertstag</paper-tab>
+                        <paper-tab value="Fri">Freitag</paper-item>
+                    </paper-tabs>
+                </app-toolbar>
+            </app-header>
+            <div>
+                <stundenplan-feed feed-events-url="[[feedEventsUrl]]" filter-by="{{filterBy}}" week-day="[[day]]">
+                </stundenplan-feed>
+            </div>
+        </app-header-layout>
+    </template>
+    <script src="fh-stundenplan-app.js"></script>
+</dom-module>
