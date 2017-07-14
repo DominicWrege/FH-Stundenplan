@@ -30,7 +30,8 @@
             }
         </style>
         <iron-ajax id="ajax" 
-            auto url="[[feedEventsUrl]]" 
+            auto 
+            url="[[feedEventsUrl]]" 
             params='{"Accept": "application/json"}' 
             handle-as="json" 
             last-response="{{response}}">
@@ -51,7 +52,7 @@
                 </table>
             </paper-material>
         </template>
-        <!-- </iron-list> -->
+    <!-- </iron-list> -->
     </template>
     <script src="stundenplan-feed.js"></script>
 </dom-module>

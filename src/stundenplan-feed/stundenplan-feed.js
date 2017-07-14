@@ -30,6 +30,15 @@ class StundenplanFeed extends Polymer.Element {
         }
     };
 
+    constructor() {
+        super();
+        if (localStorage.responeCache != null) {
+            this.response = JSON.parse(localStorage.responeCache);
+            console.log(this.response);
+        }
+
+    }
+
     formatTimePretty(time) {
         let timeFormated;
         if (time.substring(0, 1) == 1) {
@@ -77,7 +86,6 @@ class StundenplanFeed extends Polymer.Element {
             tmp = this.response;
             this.response = [];
             this.response = tmp;
-
         }
     }
 }

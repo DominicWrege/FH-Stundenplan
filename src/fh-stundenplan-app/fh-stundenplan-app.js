@@ -15,16 +15,18 @@ class FhStundenplanApp extends Polymer.Element {
 
     connectedCallback() {
         super.connectedCallback();
-        Polymer.RenderStatus.afterNextRender(this, function () {
+        Polymer.RenderStatus.afterNextRender(this, function() {
             if (localStorage.feedEventsUrl == null) {
                 this.$.settingsDialog.open();
             }
             let toDay = new Date();
-            let tmpDay = toDay.getDay();
-            if (tmpDay == 0 || tmpDay == 6) {
+            if (toDay.getDay() == 0 || toDay.getDay() == 6) {
                 this.$.tabs.selected = "Mon";
+                // } else if (toDay.getHours() > 18) {
+                //     toDay.setDate(toDay.getDate + 1);
+                //     this.$.tabs.selected = toDay.toDateString().split(" ")[0];
             } else {
-                this.$.tabs.selected = toDay.toDateString().split(" ")[0];;
+                this.$.tabs.selected = toDay.toDateString().split(" ")[0];
             }
         });
 
@@ -41,8 +43,8 @@ class FhStundenplanApp extends Polymer.Element {
         this.$.impressumDialog.open();
     }
     handleFeed(event) {
-        let feedEventsUrl = this.baseFeedUrl + event.detail.course.split(" ")[0] + "/"
-            + event.detail.course.split(" ")[1] + "/Events";
+        let feedEventsUrl = this.baseFeedUrl + event.detail.course.split(" ")[0] + "/" +
+            event.detail.course.split(" ")[1] + "/Events";
         localStorage.feedEventsUrl = feedEventsUrl;
         this.feedEventsUrl = feedEventsUrl;
 

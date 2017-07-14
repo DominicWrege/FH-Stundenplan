@@ -8,25 +8,28 @@
             }
 
             #Studiengang {
-                width: 84%;
+                width: 96%;
             }
 
             #group {
                 width: 80px;
                 color: #FFF;
             }
-
-            #groupLetterMenu {
-                width: 75px;
-            }
-
             #gruppenbuchstabe {
                 margin-bottom: 24px;
+                width: 165px;
+                display: block
             }
 
             paper-toggle-button {
                 display: inline-flex;
                 margin-bottom: 16px;
+                margin-right: 12px;
+            }
+            @media (min-width: 440px){
+            paper-toggle-button {
+                    margin-right: 40%;
+                }
             }
         </style>
         <h2>Einstellungen</h2>
@@ -38,25 +41,21 @@
                             {{courses.name}} {{itemGrade.grade}}
                         </paper-item>
                     </template>
-                </template>
-            </paper-listbox>
-        </paper-dropdown-menu>
-        <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
-            <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
-                <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
+    </template>
+    </paper-listbox>
+    </paper-dropdown-menu>
+    <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
+        <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
+            <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
                     <paper-item value="{{item}}">{{item}}</paper-item>
                 </template>
-            </paper-listbox>
-        </paper-dropdown-menu>
-        <paper-toggle-button id="filterByGroup" checked="{{group}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
-        <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen
-        </paper-toggle-button><br>
-        <iron-ajax id="ajax" 
-            auto url="[[url]]" 
-            params='{"Accept": "application/json"}' 
-            handle-as="json" 
-            last-response="{{responseRaw}}">
-        </iron-ajax>
+        </paper-listbox>
+    </paper-dropdown-menu>
+    <paper-toggle-button id="filterByGroup" checked="{{group}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
+    <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen
+    </paper-toggle-button><br>
+    <iron-ajax id="ajax" auto url="[[url]]" params='{"Accept": "application/json"}' handle-as="json" last-response="{{responseRaw}}">
+    </iron-ajax>
     </template>
     <script src="stundenplan-settings.js"></script>
 </dom-module>
