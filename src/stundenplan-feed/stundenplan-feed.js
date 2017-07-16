@@ -113,9 +113,11 @@ class StundenplanFeed extends Polymer.Element {
                     if (savedEvents[this.weekDay].length > 0) {
                         this.set("listItems", savedEvents[this.weekDay]);
                     } else {
+                        this.set("listItems", []);
                         this.set("listItems", this.sortedEvents[this.weekDay]);
                     }
                 } else {
+                    this.set("listItems", []);
                     this.set("listItems", this.sortedEvents[this.weekDay]);
                 }
             }
@@ -179,6 +181,7 @@ class StundenplanFeed extends Polymer.Element {
         });
     }
     weekDayChanged() {
+
         if (this.inEditMode) {
             this.set("listItems", this.sortedEvents[this.weekDay]);
         } else {
@@ -187,9 +190,11 @@ class StundenplanFeed extends Polymer.Element {
                 if (savedEvents[this.weekDay].length > 0) {
                     this.set("listItems", savedEvents[this.weekDay]);
                 } else {
+                    this.set("listItems", []);
                     this.set("listItems", this.sortedEvents[this.weekDay]);
                 }
             } else {
+                this.set("listItems", []);
                 this.set("listItems", this.sortedEvents[this.weekDay]);
             }
         }
