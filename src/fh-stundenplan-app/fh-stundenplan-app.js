@@ -22,9 +22,6 @@ class FhStundenplanApp extends Polymer.Element {
             let toDay = new Date();
             if (toDay.getDay() == 0 || toDay.getDay() == 6) {
                 this.$.tabs.selected = "Mon";
-                // } else if (toDay.getHours() > 18) {
-                //     toDay.setDate(toDay.getDate + 1);
-                //     this.$.tabs.selected = toDay.toDateString().split(" ")[0];
             } else {
                 this.$.tabs.selected = toDay.toDateString().split(" ")[0];
             }
@@ -42,15 +39,29 @@ class FhStundenplanApp extends Polymer.Element {
         this.$.settingsDialog.close();
         this.$.impressumDialog.open();
     }
-    handleFeed(event) {
+    handleFeedEvent(event) {
         let feedEventsUrl = this.baseFeedUrl + event.detail.course.split(" ")[0] + "/" +
             event.detail.course.split(" ")[1] + "/Events";
         localStorage.feedEventsUrl = feedEventsUrl;
         this.feedEventsUrl = feedEventsUrl;
-
+        if (this.$.feed.inEditMode) {
+            this.$.settingsDialog.close();
+        }
     }
-    handleFilter(event) {
+    handleFilterEvent(event) {
         this.filterBy = event.detail;
     }
+    handleCloseEvent() {
+        this.$.settingsDialog.close();
+    }
+    handleResetEvent() {
+        if (localStorage.savedEvents != null) {
+            localStorage.removeItem("savedEvents");
+            this.$.settingsDialog.close();
+            this.$.feed.reloadList();
+        }
+
+    }
+
 }
 window.customElements.define(FhStundenplanApp.is, FhStundenplanApp);

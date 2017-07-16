@@ -68,7 +68,7 @@ class StundenplanSettings extends Polymer.Element {
     feedChanged() {
         if (this.course != null) {
             localStorage.course = this.course;
-            this.dispatchEvent(new CustomEvent('feed', {
+            this.dispatchEvent(new CustomEvent("feed", {
                 detail: {
                     course: this.course
                 }
@@ -81,8 +81,15 @@ class StundenplanSettings extends Polymer.Element {
             let arrKeys = Object.keys(data);
             for (let i in arrValues)
                 arrValues[i].key = arrKeys[i];
+
             return arrValues;
         }
+    }
+    close() {
+        this.dispatchEvent(new CustomEvent("close"));
+    }
+    reset() {
+        this.dispatchEvent(new CustomEvent("reset"));
     }
 
 }

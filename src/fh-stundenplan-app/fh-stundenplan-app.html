@@ -11,6 +11,9 @@
             app-header {
                 background-color: #F44336;
                 color: #fff;
+                padding-bottom: 2px;
+                padding-left: 10px;
+                padding-right: 10px;
             }
 
             paper-tabs {
@@ -21,14 +24,6 @@
 
             paper-tabs paper-tab {
                 min-width: 54px;
-            }
-
-            #tabs-toolbar {
-                align-items: flex-end;
-                display: flex;
-                padding-bottom: 2px;
-                padding-left: 1.5%;
-                padding-right: 1.5%;
             }
 
             app-toolbar {
@@ -50,7 +45,7 @@
                 max-width: 550px;
                 min-width: 200px;
                 left: 2%;
-                top: 21%;
+                top: 17%;
                 right: 2%;
                 margin-right: auto;
                 margin-left: auto;
@@ -58,9 +53,11 @@
         </style>
         <paper-dialog id="settingsDialog">
             <stundenplan-settings id="settings" 
-                                on-feed="handleFeed" 
+                                on-close="handleCloseEvent"
+                                on-feed="handleFeedEvent"
+                                on-reset="handleResetEvent" 
                                 url="[[baseFeedUrl]]" 
-                                on-filter="handleFilter">
+                                on-filter="handleFilterEvent">
             </stundenplan-settings>
         </paper-dialog>
         <app-header-layout has-scrolling-region="true" fullbleed>
@@ -69,21 +66,20 @@
                     <div main-title>FH-Stundenplan</div>
                     <paper-icon-button on-click="showSettings" icon="settings"></paper-icon-button>
                 </app-toolbar>
-                <app-toolbar id="tabs-toolbar">
-                    <paper-tabs id="tabs" selected="{{day}}" autoselect-delay="0" 
-                                no-slide autoselect hide-scroll-buttons="true" 
-                                scrollable fit-container="true"
-                                attr-for-selected="value">
-                        <paper-tab value="Mon">Montag</paper-tab>
-                        <paper-tab value="Tue">Dienstag</paper-tab>
-                        <paper-tab value="Wed">Mittwoch</paper-tab>
-                        <paper-tab value="Thu">Donnerstag</paper-tab>
-                        <paper-tab value="Fri">Freitag</paper-item>
-                    </paper-tabs>
-                </app-toolbar>
+                <paper-tabs id="tabs" selected="{{day}}" autoselect-delay="0" 
+                            no-slide autoselect hide-scroll-buttons="true" 
+                            scrollable fit-container="true"
+                            attr-for-selected="value">
+                    <paper-tab value="Mon">Montag</paper-tab>
+                    <paper-tab value="Tue">Dienstag</paper-tab>
+                    <paper-tab value="Wed">Mittwoch</paper-tab>
+                    <paper-tab value="Thu">Donnerstag</paper-tab>
+                    <paper-tab value="Fri">Freitag</paper-item>
+                </paper-tabs>
             </app-header>
             <div>
                 <stundenplan-feed 
+                                id="feed"
                                 feed-events-url="[[feedEventsUrl]]" 
                                 filter-by="{{filterBy}}" 
                                 week-day="[[day]]">

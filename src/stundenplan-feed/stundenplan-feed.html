@@ -22,11 +22,36 @@
                 padding: 16px;
                 background-color: #ffffff;
             }
+            paper-checkbox{
+                float: left;
+                margin-top: 27px;
+            }
+            paper-checkbox{
+                margin-right: 20px;
+                margin-left: 15px;
+                /* --paper-checkbox-checked-color: var(--paper-red-500); */
+                --paper-checkbox-size: 23px;
+            }   
+            paper-fab{
+                position: fixed;
+                right: 15%;
+                bottom: 10%;
+                --paper-fab-background: #F44336;
+                
+            } 
+             paper-fab:focus {
+                background: #F44336;
+            } 
 
             @media (max-width: 650px) {
                  :host {
                     margin-top: 0;
                 }
+                paper-fab{
+                    right: 7%;
+                    bottom: 7%;
+                }
+
             }
         </style>
         <iron-ajax id="ajax" 
@@ -37,8 +62,9 @@
             last-response="{{response}}">
         </iron-ajax>
         <!-- <iron-list id="liste" scroll-target="document" > -->
-        <template is="dom-repeat" items="[[filter(response)]]" as="item">
+        <template is="dom-repeat" items="[[filter(listItems)]]" as="item">
             <paper-material elevation="1">
+                 <paper-checkbox data="[[item]]" on-click="newItemChecked" hidden$="{{!inEditMode}}"></paper-checkbox> 
                 <table>
                     <tr>
                         <td><b>[[item.courseType]] [[item.name]]</b></td>
@@ -52,7 +78,9 @@
                 </table>
             </paper-material>
         </template>
+    <paper-toast id="toast" text="Bitte einen Eintrag auswählen"></paper-toast>
     <!-- </iron-list> -->
+    <paper-fab icon="edit" id="editFab" on-tap="editMode"></paper-fab>
     </template>
     <script src="stundenplan-feed.js"></script>
 </dom-module>

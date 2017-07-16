@@ -17,24 +17,25 @@
             }
             #gruppenbuchstabe {
                 margin-bottom: 24px;
-                width: 165px;
+                width: 170px;
                 display: block
             }
 
             paper-toggle-button {
                 display: inline-flex;
                 margin-bottom: 16px;
-                margin-right: 12px;
             }
-            @media (min-width: 440px){
-            paper-toggle-button {
-                    margin-right: 40%;
-                }
+            #close-btn{
+                float: right;
+                margin-bottom: 10px;
             }
         </style>
         <h2>Einstellungen</h2>
         <paper-dropdown-menu id="Studiengang" label="Studiengang">
-            <paper-listbox id="courseMenu" slot="dropdown-content" selected="{{course}}" attr-for-selected="value">
+            <paper-listbox id="courseMenu" 
+                            slot="dropdown-content" 
+                            selected="{{course}}" 
+                            attr-for-selected="value">
                 <template is="dom-repeat" items="[[handleResponse(responseRaw)]]" as="courses">
                     <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade">
                         <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">
@@ -51,9 +52,16 @@
                 </template>
         </paper-listbox>
     </paper-dropdown-menu>
-    <paper-toggle-button id="filterByGroup" checked="{{group}}">Nach Gruppenbuchstabe filtern</paper-toggle-button>
-    <paper-toggle-button id="qdlButton" checked="{{qdl}}">QDL's anzeigen
-    </paper-toggle-button><br>
+    <iron-label>
+        <paper-toggle-button id="filterByGroup" checked="{{group}}"></paper-toggle-button>
+        Nach Gruppenbuchstabe filtern
+    </iron-label><br>
+    <iron-label>
+        <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
+        QDL's anzeigen
+    </iron-label><br>
+    <paper-button on-tap="reset">Stundenplan zurücksetzen</paper-button>
+    <paper-button id="close-btn" on-tap="close">Schließen</paper-button>
     <iron-ajax id="ajax" auto url="[[url]]" params='{"Accept": "application/json"}' handle-as="json" last-response="{{responseRaw}}">
     </iron-ajax>
     </template>
