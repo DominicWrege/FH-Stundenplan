@@ -20,7 +20,10 @@
     "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.1",
     "paper-fab": "PolymerElements/paper-fab#^2.0.0",
     "paper-toast": "PolymerElements/paper-toast#^2.0.0",
-    "iron-label": "PolymerElements/iron-label#^2.0.0"
+    "iron-label": "PolymerElements/iron-label#^2.0.0",
+    "app-storage": "PolymerElements/app-storage#^2.0.2",
+    "iron-pages": "PolymerElements/iron-pages#^2.0.0",
+    "iron-selector": "PolymerElements/iron-selector#^2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",

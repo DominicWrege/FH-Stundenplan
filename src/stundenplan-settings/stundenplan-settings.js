@@ -11,7 +11,7 @@ class StundenplanSettings extends Polymer.Element {
             },
             course: {
                 type: String,
-                observer: "feedChanged"
+                notify: true
             },
             groupLetter: {
                 type: String,
@@ -52,29 +52,29 @@ class StundenplanSettings extends Polymer.Element {
 
     }
     filterChanged() {
-        if (this.course != null && this.groupLetter != null) {
-            localStorage.groupLetter = this.groupLetter;
-            localStorage.qdl = this.qdl;
-            localStorage.group = this.group;
-            this.dispatchEvent(new CustomEvent('filter', {
-                detail: {
-                    group: this.group,
-                    qdl: this.qdl,
-                    groupLetter: this.groupLetter
-                }
-            }));
+            if (this.course != null && this.groupLetter != null) {
+                localStorage.groupLetter = this.groupLetter;
+                localStorage.qdl = this.qdl;
+                localStorage.group = this.group;
+                this.dispatchEvent(new CustomEvent('filter', {
+                    detail: {
+                        group: this.group,
+                        qdl: this.qdl,
+                        groupLetter: this.groupLetter
+                    }
+                }));
+            }
         }
-    }
-    feedChanged() {
-        if (this.course != null) {
-            localStorage.course = this.course;
-            this.dispatchEvent(new CustomEvent("feed", {
-                detail: {
-                    course: this.course
-                }
-            }));
-        }
-    }
+        // feedChanged() {
+        //     if (this.course != null) {
+        //         localStorage.course = this.course;
+        //         // this.dispatchEvent(new CustomEvent("feed", {
+        //         //     detail: {
+        //         //         course: this.course
+        //         //     }
+        //         // }));
+        //     }
+        // }
     handleResponse(data) {
         if (data != null) {
             let arrValues = Object.values(data);

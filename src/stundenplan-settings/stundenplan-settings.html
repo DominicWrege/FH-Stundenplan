@@ -20,7 +20,10 @@
                 width: 170px;
                 display: block
             }
-
+            paper-button {
+                text-transform: none;
+                color:var(--paper-indigo-700);
+            }
             paper-toggle-button {
                 display: inline-flex;
                 margin-bottom: 16px;
@@ -59,8 +62,8 @@
     <iron-label>
         <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
         QDL's anzeigen
-    </iron-label><br>
-    <paper-button on-tap="reset">Stundenplan zurücksetzen</paper-button>
+    </iron-label><br><br>
+    <paper-button on-tap="reset">Zurücksetzen</paper-button>
     <paper-button id="close-btn" on-tap="close">Schließen</paper-button>
     <iron-ajax id="ajax" auto url="[[url]]" params='{"Accept": "application/json"}' handle-as="json" last-response="{{responseRaw}}">
     </iron-ajax>

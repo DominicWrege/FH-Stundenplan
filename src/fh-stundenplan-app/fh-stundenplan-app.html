@@ -6,29 +6,34 @@
              :host {
                 display: block;
                 min-width: 300px;
+                --app-main-red: #F44336;
             }
 
             app-header {
-                background-color: #F44336;
+                background-color: var(--app-main-red);
                 color: #fff;
                 padding-bottom: 2px;
-                padding-left: 10px;
-                padding-right: 10px;
             }
 
             paper-tabs {
-                width: 100%;
                 max-width: 750px;
                 margin: 0 auto;
             }
-
             paper-tabs paper-tab {
                 min-width: 54px;
             }
-
             app-toolbar {
                 height: 64px;
             }
+            paper-fab{
+                position: fixed;
+                right: 15%;
+                bottom: 10%;
+                --paper-fab-background: var(--app-main-red);
+            } 
+            paper-fab:focus {
+                background: var(--app-main-red);
+            } 
 
             @media(max-width: 650px) {
                 app-toolbar {
@@ -36,6 +41,14 @@
                 }
                 paper-dialog {
                     max-width: 420px;
+                }
+                paper-tabs{
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+                paper-fab{
+                    right: 7%;
+                    bottom: 7%;
                 }
             }
 
@@ -45,7 +58,7 @@
                 max-width: 550px;
                 min-width: 200px;
                 left: 2%;
-                top: 17%;
+                top: 19%;
                 right: 2%;
                 margin-right: auto;
                 margin-left: auto;
@@ -54,7 +67,7 @@
         <paper-dialog id="settingsDialog">
             <stundenplan-settings id="settings" 
                                 on-close="handleCloseEvent"
-                                on-feed="handleFeedEvent"
+                                on-course-changed="handleFeedEvent"
                                 on-reset="handleResetEvent" 
                                 url="[[baseFeedUrl]]" 
                                 on-filter="handleFilterEvent">
@@ -77,13 +90,60 @@
                     <paper-tab value="Fri">Freitag</paper-item>
                 </paper-tabs>
             </app-header>
+
             <div>
+             <iron-ajax id="ajax" 
+                auto 
+                url="https://ws.inf.fh-dortmund.de/timetable/current/rest/CourseOfStudy/INPBPI/2/Events" 
+                params='{"Accept": "application/json"}' 
+                handle-as="json" 
+                last-response="{{response}}">
+            </iron-ajax>
+                <iron-pages
+                    selected="[[day]]"
+                    attr-for-selected="name"
+                    fallback-selection="view404"
+                    role="main">
                 <stundenplan-feed 
-                                id="feed"
-                                feed-events-url="[[feedEventsUrl]]" 
+                                mode="{{mode}}"
+                                id="feed1" 
+                                name="Mon"
+                                list-items="{{sortedMon}}"
                                 filter-by="{{filterBy}}" 
-                                week-day="[[day]]">
+                                week-day="Mon">
                 </stundenplan-feed>
+                <stundenplan-feed 
+                                id="feed2"
+                                name="Tue"
+                                mode="{{mode}}"
+                                list-items="[[sortedTue]]"
+                                filter-by="{{filterBy}}" 
+                                week-day="Tue">
+                </stundenplan-feed> 
+                 <stundenplan-feed 
+                                name="Wed"
+                                mode="{{mode}}"
+                                list-items="[[sortedWed]]"
+                                filter-by="{{filterBy}}" 
+                                week-day="Wed">
+                </stundenplan-feed> 
+                <stundenplan-feed 
+                                name="Thu"
+                                mode="{{mode}}"
+                                list-items="[[sortedThu]]"
+                                filter-by="{{filterBy}}" 
+                                week-day="Thu">
+                </stundenplan-feed>
+                <stundenplan-feed 
+                                name="Fri"
+                                mode="{{mode}}"
+                                list-items="[[sortedFri]]"
+                                filter-by="{{filterBy}}" 
+                                week-day="Fri">
+                </stundenplan-feed>
+                </iron-pages>  
+            <paper-toast id="toast" text="Bitte einen Eintrag auswählen"></paper-toast>
+            <paper-fab icon="edit" id="editFab" on-tap="editMode"></paper-fab>    
             </div>
         </app-header-layout>
     </template>

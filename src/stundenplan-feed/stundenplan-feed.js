@@ -6,30 +6,15 @@ class StundenplanFeed extends Polymer.Element {
                 type: String,
                 value: "stundenplan-feed"
             },
-
-            inEditMode: {
+            mode: {
                 type: Boolean,
-                value: false
-            },
-            response: {
-                type: Array,
-                value: [],
-                observer: "handleResponse"
+                value: false,
+                notify: true
             },
             weekDay: {
                 type: String,
                 value: "Mon",
                 observer: "weekDayChanged"
-            },
-            sortedEvents: {
-                type: Object,
-                value: {
-                    Mon: [],
-                    Tue: [],
-                    Wed: [],
-                    Thu: [],
-                    Fri: []
-                }
             },
             tmpSavedItemsArray: {
                 type: Object,
@@ -41,10 +26,10 @@ class StundenplanFeed extends Polymer.Element {
                     Fri: []
                 }
             },
-            feedEventsUrl: {
-                type: String,
+            listItems: {
+                type: Array,
+                observer: "listItemsChanged"
             },
-            listItems: [],
             filterBy: {
                 type: Object,
                 value: {
@@ -54,8 +39,8 @@ class StundenplanFeed extends Polymer.Element {
                 },
                 observer: "reloadList"
             }
-        }
-    };
+        };
+    }
 
     constructor() {
         super();
@@ -103,65 +88,58 @@ class StundenplanFeed extends Polymer.Element {
         return false;
     }
     reloadList() {
-        if (this.sortedEvents != null) {
-            if (this.inEditMode) {
-                this.unckeckAll();
-                this.set("listItems", this.sortedEvents[this.weekDay]);
-            } else {
-                if (localStorage.savedEvents != null) {
-                    let savedEvents = JSON.parse(localStorage.savedEvents);
-                    if (savedEvents[this.weekDay].length > 0) {
-                        this.set("listItems", savedEvents[this.weekDay]);
-                    } else {
-                        this.set("listItems", []);
-                        this.set("listItems", this.sortedEvents[this.weekDay]);
-                    }
-                } else {
-                    this.set("listItems", []);
-                    this.set("listItems", this.sortedEvents[this.weekDay]);
-                }
+            if (this.sortedEvents != null) {
+                // if (this.inEditMode) {
+                //     this.unckeckAll();
+                //     this.set("listItems", this.sortedEvents[this.weekDay]);
+                // } else {
+                //     if (localStorage.savedEvents != null) {
+                //         let savedEvents = JSON.parse(localStorage.savedEvents);
+                //         if (savedEvents[this.weekDay].length > 0) {
+                //             this.set("listItems", savedEvents[this.weekDay]);
+                //         } else {
+                //             this.set("listItems", []);
+                //             this.set("listItems", this.sortedEvents[this.weekDay]);
+                //         }
+                //     } else {
+                //         this.set("listItems", []);
+                //         this.set("listItems", this.sortedEvents[this.weekDay]);
+                //     }
+                // }
             }
         }
-    }
-    editMode(e) {
-        this.inEditMode = !this.inEditMode;
-        if (this.inEditMode) {
-            this.$.editFab.icon = "save";
-            this.set("listItems", this.sortedEvents[this.weekDay]);
-            this.unckeckAll();
+        // editMode(e) {
+        //     this.mode = !this.mode;
+        //     if (this.mode) {
+        //         this.$.editFab.icon = "save";
+        //         //this.set("listItems", this.sortedEvents[this.weekDay]);
+        //         this.unckeckAll();
 
-        } else {
-            this.savedCheckedItems();
-            if (this.tmpSavedItemsArray[this.weekDay].length > 0) {
-                this.$.editFab.icon = "edit";
-                this.set("listItems", []);
-                this.tmpSavedItemsArray[this.weekDay].sort((a, b) => {
-                    return a.timeBegin - b.timeBegin;
-                });
-                if (localStorage.savedEvents != null) {
-                    let oldEvents = JSON.parse(localStorage.savedEvents);
-                    oldEvents[this.weekDay] = this.tmpSavedItemsArray[this.weekDay];
-                    localStorage.savedEvents = JSON.stringify(oldEvents);
-                } else {
-                    localStorage.savedEvents = JSON.stringify(this.tmpSavedItemsArray);
-                }
-                this.set("listItems", this.tmpSavedItemsArray[this.weekDay]);
-                this.tmpSavedItemsArray[this.weekDay] = [];
-            } else {
-                this.$.toast.opened = true;
-                this.inEditMode = !this.inEditMode;
-            }
-        }
-    }
-    handleResponse(values) {
-        if (values != null && values.length > 0) {
-            this.sortedEvents[this.weekDay] = [];
-            values.forEach((item) => {
-                this.sortedEvents[item.weekday].push(item);
-            });
-            this.reloadList();
-        }
-    }
+    //     } else {
+    //         this.savedCheckedItems();
+    //         if (this.tmpSavedItemsArray[this.weekDay].length > 0) {
+    //             this.$.editFab.icon = "edit";
+    //             // this.set("listItems", []);
+    //             // this.tmpSavedItemsArray[this.weekDay].sort((a, b) => {
+    //             //     return a.timeBegin - b.timeBegin;
+    //             // });
+
+    //             //     if (localStorage.savedEvents != null) {
+    //             //         let oldEvents = JSON.parse(localStorage.savedEvents);
+    //             //         oldEvents[this.weekDay] = this.tmpSavedItemsArray[this.weekDay];
+    //             //         this.userSavedEvents = oldEvents
+    //             //         localStorage.savedEvents = JSON.stringify(oldEvents);
+    //             //     } else {
+    //             //         localStorage.savedEvents = JSON.stringify(this.tmpSavedItemsArray);
+    //             //     }
+    //             //     this.set("listItems", this.tmpSavedItemsArray[this.weekDay]);
+    //             //     this.tmpSavedItemsArray[this.weekDay] = [];
+    //             // } else {
+    //             //     this.$.toast.opened = true;
+    //             //     this.mode = !this.mode;
+    //         }
+    //     }
+    // }
     newItemChecked(event) {
         let selectedItem = event.model.item;
         if (!event.target.checked) {
@@ -181,23 +159,31 @@ class StundenplanFeed extends Polymer.Element {
         });
     }
     weekDayChanged() {
-
         if (this.inEditMode) {
-            this.set("listItems", this.sortedEvents[this.weekDay]);
+            //this.set("listItems", this.sortedEvents[this.weekDay]);
         } else {
-            if (localStorage.savedEvents != null) {
-                let savedEvents = JSON.parse(localStorage.savedEvents);
-                if (savedEvents[this.weekDay].length > 0) {
-                    this.set("listItems", savedEvents[this.weekDay]);
-                } else {
-                    this.set("listItems", []);
-                    this.set("listItems", this.sortedEvents[this.weekDay]);
-                }
-            } else {
-                this.set("listItems", []);
-                this.set("listItems", this.sortedEvents[this.weekDay]);
-            }
+            // if (localStorage.savedEvents != null) {
+            //     let savedEvents = JSON.parse(localStorage.savedEvents);
+            //     if (savedEvents[this.weekDay].length > 0) {
+            //         this.set("listItems", savedEvents[this.weekDay]);
+            //     } else {
+            //         this.set("listItems", []);
+            //         this.set("listItems", this.sortedEvents[this.weekDay]);
+            //     }
+            // } else {
+            //     this.set("listItems", []);
+            //     this.set("listItems", this.sortedEvents[this.weekDay]);
+            // }
         }
+    }
+
+    listItemsChanged(value) {
+        if (value.length > 0) {
+            //console.log(value);
+            //this.savedList = value;
+            //console.log(this.$.storage.data);
+        }
+
     }
     savedCheckedItems() {
         let liste = this.shadowRoot.querySelectorAll('paper-material paper-checkbox');

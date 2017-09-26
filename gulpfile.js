@@ -21,6 +21,7 @@ gulp.task("build:copyToPublic", ["build:clean"], (callback) => {
     gulp.src("icons/*").pipe(gulp.dest(publicFolder + "/icons"));
     gulp.src("manifest.json").pipe(gulp.dest(publicFolder));
     gulp.src("src/style/Roboto/*").pipe(gulp.dest(publicFolder + "/Roboto"));
+    gulp.src("safari-js/*").pipe(gulp.dest(publicFolder));
     callback();
 });
 
