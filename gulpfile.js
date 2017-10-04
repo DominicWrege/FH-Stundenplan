@@ -1,13 +1,15 @@
 const gulp = require("gulp")
 const vulcanize = require("gulp-vulcanize");
 const uglify = require("gulp-uglify");
-var del = require('del');
+const del = require('del');
 const swPrecache = require("sw-precache");
 const replace = require("gulp-replace");
+// const removeHtmlComments = require("gulp-remove-html-comments");
 
+const removeComments = require('gulp-strip-comments');
 const srcPath = "src/";
-const srcIndexFile = "index.html";
 
+const srcIndexFile = "index.html";
 const publicFolder = "public";
 
 
@@ -24,7 +26,7 @@ gulp.task("build:copyToPublic", ["build:clean"], (callback) => {
     callback();
 });
 
-gulp.task("build:generateSW", ["build:vulcanize"], (callback) => {
+gulp.task("build:generateSW", ["build:remove-comments"], (callback) => {
     swPrecache.write("public/service-worker.js", {
         staticFileGlobs: [
             publicFolder + "/index.html",
@@ -49,6 +51,14 @@ gulp.task("build:generateSW", ["build:vulcanize"], (callback) => {
     });
 });
 
+gulp.task("build:remove-comments", ["build:vulcanize"], (callback) => {
+    console.log("djasb");
+    return gulp.src("public/index.html")
+        .pipe(removeComments())
+        .pipe(gulp.dest("public"));
+});
+
+
 gulp.task("build:vulcanize", ["build:copyToPublic"], () => {
     return gulp.src(srcIndexFile)
         .pipe(vulcanize({
@@ -62,7 +72,7 @@ gulp.task("build:vulcanize", ["build:copyToPublic"], () => {
 
 
 gulp.task("default", ["watch"]);
-gulp.task("build", ["build:clean", "build:copyToPublic", "build:vulcanize", "build:generateSW"]);
+gulp.task("build", ["build:clean", "build:copyToPublic", "build:vulcanize","build:remove-comments", "build:generateSW"]);
 
 //  "build:copyToPublic", "build:generateSW"
 // gulp.task("watch", () => {

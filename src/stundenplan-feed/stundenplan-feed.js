@@ -78,10 +78,12 @@ class StundenplanFeed extends Polymer.Element {
             return items.filter(item => {
                 if (!this.filterBy.group && !this.filterBy.qdl)
                     return item.name.indexOf("QdL") == -1;
+                else if (this.filterBy.qdl && this.filterBy.group)
+                    return this.checkGroup(this.filterBy.groupLetter, item.studentSet);
                 else if (!this.filterBy.qdl && this.filterBy.group)
                     return this.checkGroup(this.filterBy.groupLetter, item.studentSet) && item.name.indexOf("QdL") == -1;
                 else
-                    return (this.filterBy.qdl && !this.filterBy.group) || item.name.indexOf("QdL") == -1;
+                    return true;
             });
         }
     }
@@ -108,22 +110,17 @@ class StundenplanFeed extends Polymer.Element {
                 this.unckeckAll();
                 this.set("listItems", this.sortedEvents[this.weekDay]);
             } else {
-                if (localStorage.savedEvents != null) {
-                    let savedEvents = JSON.parse(localStorage.savedEvents);
-                    if (savedEvents[this.weekDay].length > 0) {
-                        this.set("listItems", savedEvents[this.weekDay]);
-                    } else {
-                        this.set("listItems", []);
-                        this.set("listItems", this.sortedEvents[this.weekDay]);
-                    }
-                } else {
-                    this.set("listItems", []);
-                    this.set("listItems", this.sortedEvents[this.weekDay]);
-                }
+                // To set listeItems this to null works better =/ js why?!
+                let tempData = [];
+                tempData = this.listItems;
+                this.listeItems = null;
+                this.listItems = tempData;
+                this.set("listItems", []);
+                this.set("listItems", this.sortedEvents[this.weekDay]);
             }
         }
     }
-    editMode(e) {
+    editMode(event) {
         this.inEditMode = !this.inEditMode;
         if (this.inEditMode) {
             this.$.editFab.icon = "save";

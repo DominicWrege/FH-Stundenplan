@@ -3,7 +3,7 @@
 <dom-module id="stundenplan-settings">
     <template>
         <style>
-             :host {
+            :host {
                 display: block;
             }
 
@@ -23,11 +23,24 @@
 
             paper-toggle-button {
                 display: inline-flex;
-                margin-bottom: 16px;
+                margin-bottom: 16px;   
+            }
+            paper-button{
+                background-color: var(--paper-grey-200);
+                margin-top: 16px;
             }
             #close-btn{
                 float: right;
                 margin-bottom: 10px;
+            }
+            #reset-btn{
+                color: var(--paper-red-500);
+            }
+
+            @media(max-width: 410px) {
+                #close-btn{
+                    float: left;
+                }
             }
         </style>
         <h2>Einstellungen</h2>
@@ -60,7 +73,7 @@
         <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
         QDL's anzeigen
     </iron-label><br>
-    <paper-button on-tap="reset">Stundenplan zurücksetzen</paper-button>
+    <paper-button id="reset-btn" on-tap="reset">Stundenplan zurücksetzen</paper-button>
     <paper-button id="close-btn" on-tap="close">Schließen</paper-button>
     <iron-ajax id="ajax" auto url="[[url]]" params='{"Accept": "application/json"}' handle-as="json" last-response="{{responseRaw}}">
     </iron-ajax>
