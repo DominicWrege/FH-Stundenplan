@@ -33,8 +33,8 @@ class FhStundenplanApp extends Polymer.Element {
 
     }
     showImpressumDialog() {
-        this.$.settingsDialog.close();
         this.$.impressumDialog.open();
+        this.$.settingsDialog.close();
     }
     showSettings(){
         this.$.settingsDialog.open();
