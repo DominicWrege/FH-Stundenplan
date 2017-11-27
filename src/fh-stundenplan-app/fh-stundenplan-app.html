@@ -111,7 +111,7 @@
                     <paper-tab day="Fri"> Freitag</paper-item>
                 </paper-tabs>
             </app-header>
-                <iron-lazy-pages id="pages" selected="{{day}}" attr-for-selected="week-day">
+                <iron-pages id="pages" selected="{{day}}" attr-for-selected="week-day">
                     <stundenplan-fetcher 
                         sorted-events="{{data}}" 
                         feed-events-url="[[feedEventsUrl]]">
@@ -143,7 +143,7 @@
                         week-day="Fri">
                     </stundenplan-feed>
                     
-                </iron-lazy-pages>
+                </iron-pages>
         </app-header-layout>
     </template>
     <script src="fh-stundenplan-app.js"></script>
