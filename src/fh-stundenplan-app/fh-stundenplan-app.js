@@ -32,12 +32,15 @@ class FhStundenplanApp extends Polymer.Element {
         }
 
     }
-    showSettings() {
-        this.$.settingsDialog.open();
-    }
     showImpressumDialog() {
         this.$.settingsDialog.close();
         this.$.impressumDialog.open();
+    }
+    showSettings(){
+        this.$.settingsDialog.open();
+    }
+    closeImpressum(){
+        this.$.impressumDialog.close();
     }
     handleFeedEvent(event) {
         let feedEventsUrl = this.baseFeedUrl + event.detail.course.split(" ")[0] + "/" +
@@ -65,5 +68,6 @@ class FhStundenplanApp extends Polymer.Element {
         }
 
     }
+
 }
 window.customElements.define(FhStundenplanApp.is, FhStundenplanApp);
