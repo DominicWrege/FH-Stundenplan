@@ -52,10 +52,13 @@ gulp.task("build:generateSW", ["build:remove-comments"], (callback) => {
 });
 
 gulp.task("build:remove-comments", ["build:vulcanize"], (callback) => {
-    console.log("djasb");
     return gulp.src("public/index.html")
         .pipe(removeComments())
         .pipe(gulp.dest("public"));
+});
+
+gulp.task("build:copySafariJS",["build:remove-comments"], () =>{
+    return gulp.src("safari-js/*.map").pipe(gulp.dest("public"));
 });
 
 
@@ -72,7 +75,7 @@ gulp.task("build:vulcanize", ["build:copyToPublic"], () => {
 
 
 gulp.task("default", ["watch"]);
-gulp.task("build", ["build:clean", "build:copyToPublic", "build:vulcanize","build:remove-comments", "build:generateSW"]);
+gulp.task("build", ["build:clean", "build:copyToPublic", "build:vulcanize","build:remove-comments", "build:copySafariJS" ,"build:generateSW"]);
 
 //  "build:copyToPublic", "build:generateSW"
 // gulp.task("watch", () => {

@@ -44,9 +44,9 @@ class FhStundenplanApp extends Polymer.Element {
             event.detail.course.split(" ")[1] + "/Events";
         localStorage.feedEventsUrl = feedEventsUrl;
         this.feedEventsUrl = feedEventsUrl;
-        if (this.$.feed.inEditMode) {
-            this.$.settingsDialog.close();
-        }
+        // if (this.$.pages.selectedItem.inEditMode === true) {
+        //     this.$.settingsDialog.close();
+        // }
     }
     handleFilterEvent(event) {
         this.filterBy = event.detail;
@@ -56,12 +56,14 @@ class FhStundenplanApp extends Polymer.Element {
     }
     handleResetEvent() {
         if (localStorage.savedEvents != null) {
-            localStorage.removeItem("savedEvents");
+            let cachedEvents = JSON.parse(localStorage.savedEvents);
+            cachedEvents[this.$.pages.selected] = [];
+            localStorage.savedEvents = JSON.stringify(cachedEvents);
+            // localStorage.removeItem("savedEvents");
             this.$.settingsDialog.close();
-            this.$.feed.reloadList();
+            this.$.pages.selectedItem.reset();
         }
 
     }
-
 }
 window.customElements.define(FhStundenplanApp.is, FhStundenplanApp);

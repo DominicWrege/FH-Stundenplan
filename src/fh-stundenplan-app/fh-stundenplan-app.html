@@ -38,10 +38,9 @@
                     max-width: 420px;
                 }
             }
-
-            paper-dialog {
+            paper-dialog{
                 position: absolute;
-                min-height: 280px;
+                min-height: 320px;
                 max-width: 550px;
                 min-width: 200px;
                 left: 2%;
@@ -50,6 +49,15 @@
                 margin-right: auto;
                 margin-left: auto;
             }
+            @media (max-height: 575px){
+                paper-dialog{
+                    top: 8%;
+                }
+            }
+            /* skeleton-carousel {
+                height: 100%;           
+            } */
+
         </style>
         <paper-dialog id="settingsDialog">
             <stundenplan-settings id="settings" 
@@ -60,31 +68,56 @@
                                 on-filter="handleFilterEvent">
             </stundenplan-settings>
         </paper-dialog>
-        <app-header-layout has-scrolling-region="true" fullbleed>
+        <app-header-layout fullbleed>
             <app-header slot="header" effects="waterfall" fixed>
                 <app-toolbar>
                     <div main-title>FH-Stundenplan</div>
                     <paper-icon-button on-click="showSettings" icon="settings"></paper-icon-button>
                 </app-toolbar>
-                <paper-tabs id="tabs" selected="{{day}}" autoselect-delay="0" 
+                <paper-tabs id="tabs" autoselect-delay="0" selected="{{day}}" 
                             no-slide autoselect hide-scroll-buttons="true" 
                             scrollable fit-container="true"
-                            attr-for-selected="value">
-                    <paper-tab value="Mon">Montag</paper-tab>
-                    <paper-tab value="Tue">Dienstag</paper-tab>
-                    <paper-tab value="Wed">Mittwoch</paper-tab>
-                    <paper-tab value="Thu">Donnerstag</paper-tab>
-                    <paper-tab value="Fri">Freitag</paper-item>
+                            attr-for-selected="day">
+                    <paper-tab day="Mon">Montag</paper-tab>
+                    <paper-tab day="Tue">Dienstag</paper-tab>
+                    <paper-tab day="Wed">Mittwoch</paper-tab>
+                    <paper-tab day="Thu">Donnerstag</paper-tab>
+                    <paper-tab day="Fri"> Freitag</paper-item>
                 </paper-tabs>
             </app-header>
-            <div>
-                <stundenplan-feed 
-                                id="feed"
-                                feed-events-url="[[feedEventsUrl]]" 
-                                filter-by="{{filterBy}}" 
-                                week-day="[[day]]">
-                </stundenplan-feed>
-            </div>
+                <iron-lazy-pages id="pages" selected="{{day}}" attr-for-selected="week-day">
+                    <stundenplan-fetcher 
+                        sorted-events="{{data}}" 
+                        feed-events-url="[[feedEventsUrl]]">
+                    </stundenplan-fetcher>
+
+                    <stundenplan-feed 
+                        list-original="[[data.Mon]]"
+                        filter-by="{{filterBy}}"
+                        week-day="Mon">
+                    </stundenplan-feed>
+                    <stundenplan-feed 
+                        list-original="[[data.Tue]]"
+                        filter-by="{{filterBy}}" 
+                        week-day="Tue">
+                    </stundenplan-feed>
+                    <stundenplan-feed 
+                        list-original="[[data.Wed]]"
+                        filter-by="{{filterBy}}" 
+                        week-day="Wed">
+                    </stundenplan-feed>
+                    <stundenplan-feed
+                        list-original="[[data.Thu]]"
+                        filter-by="{{filterBy}}" 
+                        week-day="Thu">
+                    </stundenplan-feed>
+                    <stundenplan-feed 
+                        list-original="[[data.Fri]]"
+                        filter-by="{{filterBy}}" 
+                        week-day="Fri">
+                    </stundenplan-feed>
+                    
+                </iron-lazy-pages>
         </app-header-layout>
     </template>
     <script src="fh-stundenplan-app.js"></script>

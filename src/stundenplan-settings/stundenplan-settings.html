@@ -5,10 +5,11 @@
         <style>
             :host {
                 display: block;
+                min-height: 335px;
             }
-
-            #Studiengang {
+            #studiengang {
                 width: 96%;
+                margin-bottom: 16px;
             }
 
             #group {
@@ -20,10 +21,10 @@
                 width: 170px;
                 display: block
             }
-
-            paper-toggle-button {
-                display: inline-flex;
-                margin-bottom: 16px;   
+            iron-label{
+                display: grid;
+                grid-template-columns: 50px auto;
+                margin-bottom: 18px;
             }
             paper-button{
                 background-color: var(--paper-grey-200);
@@ -41,10 +42,25 @@
                 #close-btn{
                     float: left;
                 }
+                #close-btn{
+                    margin-bottom: 16px;
+                }  
+            }
+            @media(max-height: 580px){
+                h2{
+                    margin-bottom: 0;
+                }
+                paper-button{
+                    height: 29px;
+                }
+                #studiengang{
+                   height: 28px;
+                   margin-bottom: 36px;
+                }
             }
         </style>
         <h2>Einstellungen</h2>
-        <paper-dropdown-menu id="Studiengang" label="Studiengang">
+        <paper-dropdown-menu id="studiengang" label="Studiengang">
             <paper-listbox id="courseMenu" 
                             slot="dropdown-content" 
                             selected="{{course}}" 
@@ -55,28 +71,28 @@
                             {{courses.name}} {{itemGrade.grade}}
                         </paper-item>
                     </template>
-    </template>
-    </paper-listbox>
-    </paper-dropdown-menu>
-    <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
-        <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
-            <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
-                    <paper-item value="{{item}}">{{item}}</paper-item>
                 </template>
         </paper-listbox>
-    </paper-dropdown-menu>
-    <iron-label>
-        <paper-toggle-button id="filterByGroup" checked="{{group}}"></paper-toggle-button>
-        Nach Gruppenbuchstabe filtern
-    </iron-label><br>
-    <iron-label>
-        <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
-        QDL's anzeigen
-    </iron-label><br>
-    <paper-button id="reset-btn" on-tap="reset">Stundenplan zurücksetzen</paper-button>
-    <paper-button id="close-btn" on-tap="close">Schließen</paper-button>
-    <iron-ajax id="ajax" auto url="[[url]]" params='{"Accept": "application/json"}' handle-as="json" last-response="{{responseRaw}}">
-    </iron-ajax>
+        </paper-dropdown-menu>
+        <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
+            <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
+                <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
+                        <paper-item value="{{item}}">{{item}}</paper-item>
+                    </template>
+            </paper-listbox>
+        </paper-dropdown-menu>
+        <iron-label>
+            <paper-toggle-button id="filterByGroup" checked="{{group}}"></paper-toggle-button>
+            Nach Gruppenbuchstabe filtern
+        </iron-label>
+        <iron-label>
+            <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
+            QDL's anzeigen
+        </iron-label>
+        <paper-button id="reset-btn" on-tap="reset">Stundenplan zurücksetzen</paper-button>
+        <paper-button id="close-btn" on-tap="close">Schließen</paper-button>
+        <iron-ajax id="ajax" auto url="[[url]]" params='{"Accept": "application/json"}' handle-as="json" last-response="{{responseRaw}}">
+        </iron-ajax>
     </template>
     <script src="stundenplan-settings.js"></script>
 </dom-module>

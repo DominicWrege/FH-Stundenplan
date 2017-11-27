@@ -10,7 +10,8 @@
                 margin: 0 auto;
                 margin-top: 3%;
                 margin-bottom: 5%;
-                max-width: 650px;
+                width: 100%;
+                max-width: 720px;
             }
 
             span {
@@ -54,13 +55,6 @@
 
             }
         </style>
-        <iron-ajax id="ajax" 
-            auto 
-            url="[[feedEventsUrl]]" 
-            params='{"Accept": "application/json"}' 
-            handle-as="json" 
-            last-response="{{response}}">
-        </iron-ajax>
         <!-- <iron-list id="liste" scroll-target="document" > -->
         <template is="dom-repeat" items="[[filter(listItems)]]" as="item">
             <paper-material elevation="1">
@@ -70,7 +64,7 @@
                         <td><b>[[item.courseType]] [[item.name]]</b></td>
                     </tr>
                     <tr>
-                        <td>[[formatTimePretty(item.timeBegin)]] - [[formatTimePretty(item.timeEnd)]] <span></span>| <span>[[item.roomId]]</span></td>
+                        <td>[[item.timeBegin]] - [[item.timeEnd]] <span></span>| <span>[[item.roomId]]</span></td>
                     </tr>
                     <tr>
                         <td>[[item.studentSet]] <span></span>| <span>[[item.lecturerName]]</span></td>
@@ -81,6 +75,10 @@
     <paper-toast id="toast" text="Bitte einen Eintrag auswählen"></paper-toast>
     <!-- </iron-list> -->
     <paper-fab icon="edit" id="editFab" on-tap="editMode"></paper-fab>
+    <app-localstorage-document id="storage" key="search">
+    </app-localstorage-document>
     </template>
+    <script src="weekEvents.js"></script>
+    <script src="myFilter.js"></script>
     <script src="stundenplan-feed.js"></script>
 </dom-module>

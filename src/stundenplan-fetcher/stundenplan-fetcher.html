@@ -1,0 +1,23 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+
+<dom-module id="stundenplan-fetcher">
+    <template>
+        <style>
+            :host {
+                display: none
+            }
+        </style>
+
+        <iron-ajax id="ajax" 
+            auto 
+            url="[[feedEventsUrl]]"
+            params='{"Accept": "application/json"}' 
+            handle-as="json" 
+            last-response="{{response}}">
+        </iron-ajax>
+        
+    </template>
+
+    <script src="stundenplan-fetcher.js"></script>
+</dom-module>

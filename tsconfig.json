@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "dom",
+            "es5",
+            "scripthost",
+            "es2015.iterable"
+        ],
+        "target": "es5"
+    },
+    "files": [
+        "src/stundenplan-feed/*.ts"
+    ]
+}

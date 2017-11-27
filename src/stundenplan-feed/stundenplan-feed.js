@@ -2,76 +2,40 @@ class StundenplanFeed extends Polymer.Element {
     static get is() { return "stundenplan-feed"; }
     static get properties() {
         return {
-            name: {
-                type: String,
-                value: "stundenplan-feed"
-            },
-
             inEditMode: {
                 type: Boolean,
-                value: false
-            },
-            response: {
-                type: Array,
-                value: [],
-                observer: "handleResponse"
+                value: false,
+                notify: true,
+                reflectToAttribute: true
             },
             weekDay: {
                 type: String,
-                value: "Mon",
-                observer: "weekDayChanged"
+                // observer: "weekDayChanged"
             },
-            sortedEvents: {
-                type: Object,
-                value: {
-                    Mon: [],
-                    Tue: [],
-                    Wed: [],
-                    Thu: [],
-                    Fri: []
-                }
+            tmpSavedItems: Object,
+            listItems: {
+                type: Array,
+                value: []
             },
-            tmpSavedItemsArray: {
-                type: Object,
-                value: {
-                    Mon: [],
-                    Tue: [],
-                    Wed: [],
-                    Thu: [],
-                    Fri: []
-                }
+            listOriginal: {
+                type: Array,
+                observer: "itemsLoaded"
             },
-            feedEventsUrl: {
-                type: String,
-            },
-            listItems: [],
             filterBy: {
                 type: Object,
-                value: {
-                    groupLetter: String,
-                    group: Boolean,
-                    qdl: Boolean
-                },
                 observer: "reloadList"
+            },
+            loaded: {
+                type:Boolean,
+                value: false
             }
         }
     };
 
     constructor() {
         super();
-        if (localStorage.responeCache != null) {
-            this.response = JSON.parse(localStorage.responeCache);
-        }
-
-    }
-    formatTimePretty(time) {
-        let timeFormated;
-        if (time.substring(0, 1) == 1) {
-            timeFormated = time.substring(0, 2) + ":" + time.substring(2, 4);
-        } else {
-            timeFormated = "0" + time.substring(0, 1) + ":" + time.substring(1, 3);
-        }
-        return timeFormated;
+        this.tmpSavedItems = new WeekEvents();
+        this.filterBy = new MyFilter();
     }
     filter(items) {
         if (items != null) {
@@ -87,86 +51,114 @@ class StundenplanFeed extends Polymer.Element {
             });
         }
     }
-    checkGroup(userGroupLetter, rangeGroupLetter) {
-        let letters = rangeGroupLetter.split("-");
-        let firstLetter = letters[0].substring(0, 1);
-        if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
-            return true;
-        } else if (letters[1] == null) {
-            return false;
-        }
-        let lastLetter = letters[1].substring(0, 1);
-        let firstLetterAscii = firstLetter.charCodeAt(0);
-        let lastLetterAcii = lastLetter.charCodeAt(0);
-        let userGroupLetterAscii = userGroupLetter.charCodeAt(0);
-        if (userGroupLetterAscii >= firstLetterAscii && userGroupLetterAscii <= lastLetterAcii) {
-            return true;
+
+    loadFromCache(){
+        if (localStorage.savedEvents != null) {
+            let cachedEvents = JSON.parse(localStorage.savedEvents);
+            if(cachedEvents[this.weekDay].length > 0){
+                this.listItems = cachedEvents[this.weekDay];
+                return this.loaded = true;
+            }
         }
         return false;
     }
-    reloadList() {
-        if (this.sortedEvents != null) {
-            if (this.inEditMode) {
-                this.unckeckAll();
-                this.set("listItems", this.sortedEvents[this.weekDay]);
-            } else {
-                // To set listeItems this to null works better =/ js why?!
-                let tempData = [];
-                tempData = this.listItems;
-                this.listeItems = null;
-                this.listItems = tempData;
-                this.set("listItems", []);
-                this.set("listItems", this.sortedEvents[this.weekDay]);
-            }
+
+    itemsLoaded(values){
+        if (!this.loadFromCache()) {
+            this.set("listItems", values);
         }
     }
+    checkGroup(userGroupLetter, rangeGroupLetter) {
+            let letters = rangeGroupLetter.split("-");
+            let firstLetter = letters[0].substring(0, 1);
+            if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
+                return true;
+            } else if (letters[1] == null) {
+                return false;
+            }
+            let lastLetter = letters[1].substring(0, 1);
+            let firstLetterAscii = firstLetter.charCodeAt(0);
+            let lastLetterAcii = lastLetter.charCodeAt(0);
+            if(typeof(userGroupLetter) === "string"){
+                let userGroupLetterAscii = userGroupLetter.charCodeAt(0);
+                return userGroupLetterAscii >= firstLetterAscii && userGroupLetterAscii <= lastLetterAcii;
+            }
+        
+        return false;
+    }
+    reloadList() {
+        if (this.listItems.length > 0){
+            if (this.inEditMode) {
+                this.unckeckAll();
+                this.set("listItems", this.listOriginal);
+            } else {
+                // To set listeItems this to null works better =/ js why?!
+                if (localStorage.savedEvents != null) {
+                    let savedEvents = JSON.parse(localStorage.savedEvents);
+                    if (savedEvents[this.weekDay].length > 0) {
+                        this.set("listItems", savedEvents[this.weekDay]);
+                    }else  {
+                        let tempData = [];
+                        tempData = this.listItems;
+                        this.set("listItems", []);
+                        this.set("listItems", tempData);
+                    }
+                } else {
+                    this.reset();
+                }
+            }
+        }
+       
+    }
+    reset(){
+        this.set("listItems", []);
+        this.set("listItems", this.listOriginal);
+    }
+
     editMode(event) {
         this.inEditMode = !this.inEditMode;
         if (this.inEditMode) {
             this.$.editFab.icon = "save";
-            this.set("listItems", this.sortedEvents[this.weekDay]);
+            this.set("listItems", this.listOriginal);
             this.unckeckAll();
 
         } else {
-            this.savedCheckedItems();
-            if (this.tmpSavedItemsArray[this.weekDay].length > 0) {
+            //this.savedCheckedItems();
+            //this.tmpSavedItems[this.weekDay] = this.listeItems;
+            if (this.tmpSavedItems[this.weekDay].length > 0) {
                 this.$.editFab.icon = "edit";
                 this.set("listItems", []);
-                this.tmpSavedItemsArray[this.weekDay].sort((a, b) => {
+                this.tmpSavedItems[this.weekDay].sort((a, b) => {
                     return a.timeBegin - b.timeBegin;
                 });
+                // const storage = this.$.storage;
+                // storage.saveValue("search":this.tmpSavedItems[this.weekDay]); 
+
                 if (localStorage.savedEvents != null) {
                     let oldEvents = JSON.parse(localStorage.savedEvents);
-                    oldEvents[this.weekDay] = this.tmpSavedItemsArray[this.weekDay];
+                    oldEvents[this.weekDay] = this.tmpSavedItems[this.weekDay];
                     localStorage.savedEvents = JSON.stringify(oldEvents);
                 } else {
-                    localStorage.savedEvents = JSON.stringify(this.tmpSavedItemsArray);
+                    localStorage.savedEvents = JSON.stringify(this.tmpSavedItems);
                 }
-                this.set("listItems", this.tmpSavedItemsArray[this.weekDay]);
-                this.tmpSavedItemsArray[this.weekDay] = [];
+                this.set("listItems", this.tmpSavedItems[this.weekDay]);
+                this.tmpSavedItems[this.weekDay] = [];
             } else {
                 this.$.toast.opened = true;
                 this.inEditMode = !this.inEditMode;
             }
         }
     }
-    handleResponse(values) {
-        if (values != null && values.length > 0) {
-            this.sortedEvents[this.weekDay] = [];
-            values.forEach((item) => {
-                this.sortedEvents[item.weekday].push(item);
-            });
-            this.reloadList();
-        }
-    }
     newItemChecked(event) {
         let selectedItem = event.model.item;
+        //uncheked
         if (!event.target.checked) {
-            let index = this.tmpSavedItemsArray[this.weekDay].indexOf(selectedItem);
-            this.tmpSavedItemsArray[this.weekDay].splice(index, 1);
-        } else {
-            if (this.tmpSavedItemsArray[this.weekDay].indexOf(selectedItem) == -1)
-                this.tmpSavedItemsArray[this.weekDay].push(selectedItem);
+            let index = this.tmpSavedItems[this.weekDay].indexOf(selectedItem);
+            this.tmpSavedItems[this.weekDay].splice(index, 1);
+        } else{
+        //cheked
+            if (this.tmpSavedItems[this.weekDay].indexOf(selectedItem) == -1)
+                this.tmpSavedItems[this.weekDay].push(selectedItem);
         }
     }
     unckeckAll() {
@@ -177,33 +169,14 @@ class StundenplanFeed extends Polymer.Element {
             }
         });
     }
-    weekDayChanged() {
-
-        if (this.inEditMode) {
-            this.set("listItems", this.sortedEvents[this.weekDay]);
-        } else {
-            if (localStorage.savedEvents != null) {
-                let savedEvents = JSON.parse(localStorage.savedEvents);
-                if (savedEvents[this.weekDay].length > 0) {
-                    this.set("listItems", savedEvents[this.weekDay]);
-                } else {
-                    this.set("listItems", []);
-                    this.set("listItems", this.sortedEvents[this.weekDay]);
-                }
-            } else {
-                this.set("listItems", []);
-                this.set("listItems", this.sortedEvents[this.weekDay]);
-            }
-        }
-    }
-    savedCheckedItems() {
-        let liste = this.shadowRoot.querySelectorAll('paper-material paper-checkbox');
-        liste.forEach((item) => {
-            if (item.checked && this.tmpSavedItemsArray[this.weekDay].indexOf(item.data) == -1) {
-                this.tmpSavedItemsArray[this.weekDay].push(item.data);
-            }
-        });
-    }
+    // savedCheckedItems() {
+    //     let liste = this.shadowRoot.querySelectorAll('paper-material paper-checkbox');
+    //     liste.forEach((item) => {
+    //         if (item.checked && this.tmpSavedItems[this.weekDay].indexOf(item.data) == -1) {
+    //             this.tmpSavedItems[this.weekDay].push(item.data);
+    //         }
+    //     });
+    // }
 
 }
 window.customElements.define(StundenplanFeed.is, StundenplanFeed);
