@@ -67,6 +67,9 @@ class StundenplanFeed extends Polymer.Element {
         if (!this.loadFromCache()) {
             this.set("listItems", values);
         }
+        if (this.inEditMode) {
+            this.unckeckAll();
+        }
     }
     checkGroup(userGroupLetter, rangeGroupLetter) {
             let letters = rangeGroupLetter.split("-");
@@ -90,19 +93,14 @@ class StundenplanFeed extends Polymer.Element {
         if (this.listItems.length > 0){
             if (this.inEditMode) {
                 this.unckeckAll();
-                this.set("listItems", this.listOriginal);
+                this.reset();
             } else {
                 // To set listeItems this to null works better =/ js why?!
-                if (localStorage.savedEvents != null) {
-                    let savedEvents = JSON.parse(localStorage.savedEvents);
-                    if (savedEvents[this.weekDay].length > 0) {
-                        this.set("listItems", savedEvents[this.weekDay]);
-                    }else  {
-                        let tempData = [];
-                        tempData = this.listItems;
-                        this.set("listItems", []);
-                        this.set("listItems", tempData);
-                    }
+                if (!this.loadFromCache()) {
+                    let tempData = [];
+                    tempData = this.listItems;
+                    this.set("listItems", []);
+                    this.set("listItems", tempData);
                 } else {
                     this.reset();
                 }
@@ -114,50 +112,44 @@ class StundenplanFeed extends Polymer.Element {
         this.set("listItems", []);
         this.set("listItems", this.listOriginal);
     }
-
     editMode(event) {
         this.inEditMode = !this.inEditMode;
-        if (this.inEditMode) {
-            this.$.editFab.icon = "save";
-            this.set("listItems", this.listOriginal);
-            this.unckeckAll();
-
-        } else {
-            //this.savedCheckedItems();
-            //this.tmpSavedItems[this.weekDay] = this.listeItems;
-            if (this.tmpSavedItems[this.weekDay].length > 0) {
-                this.$.editFab.icon = "edit";
-                this.set("listItems", []);
-                this.tmpSavedItems[this.weekDay].sort((a, b) => {
-                    return a.timeBegin - b.timeBegin;
-                });
-                // const storage = this.$.storage;
-                // storage.saveValue("search":this.tmpSavedItems[this.weekDay]); 
-
-                if (localStorage.savedEvents != null) {
-                    let oldEvents = JSON.parse(localStorage.savedEvents);
-                    oldEvents[this.weekDay] = this.tmpSavedItems[this.weekDay];
-                    localStorage.savedEvents = JSON.stringify(oldEvents);
-                } else {
-                    localStorage.savedEvents = JSON.stringify(this.tmpSavedItems);
-                }
-                this.set("listItems", this.tmpSavedItems[this.weekDay]);
-                this.tmpSavedItems[this.weekDay] = [];
-            } else {
-                this.$.toast.opened = true;
-                this.inEditMode = !this.inEditMode;
-            }
-        }
+        this.set("listItems", this.listOriginal);
+        this.unckeckAll();
     }
+    saveItems(){
+        if (this.tmpSavedItems[this.weekDay].length > 0) {
+            this.set("listItems", []);
+            if (localStorage.savedEvents != null) {
+                let oldEvents = JSON.parse(localStorage.savedEvents);
+                this.tmpSavedItems[this.weekDay] = oldEvents[this.weekDay]
+                    .filter(item => 
+                        !includes(this.tmpSavedItems[this.weekDay], item, item => item.courseId))
+                    .concat(this.tmpSavedItems[this.weekDay]);
+                localStorage.savedEvents = JSON.stringify(this.tmpSavedItems);
+            } else {
+                localStorage.savedEvents = JSON.stringify(this.tmpSavedItems);
+            }
+            this.tmpSavedItems[this.weekDay].sort((a, b) => {
+                return a.timestampBegin - b.timestampBegin;
+            });
+            this.set("listItems", this.tmpSavedItems[this.weekDay]);
+            this.tmpSavedItems[this.weekDay] = [];
+        }else{
+            this.loadFromCache();
+        }
+        this.inEditMode = !this.inEditMode;
+    }
+    
     newItemChecked(event) {
         let selectedItem = event.model.item;
-        //uncheked
-        if (!event.target.checked) {
+        //uncheck
+        if (event.target.checked) {
             let index = this.tmpSavedItems[this.weekDay].indexOf(selectedItem);
             this.tmpSavedItems[this.weekDay].splice(index, 1);
         } else{
         //cheked
-            if (this.tmpSavedItems[this.weekDay].indexOf(selectedItem) == -1)
+            if (this.tmpSavedItems[this.weekDay].indexOf(selectedItem) === -1)
                 this.tmpSavedItems[this.weekDay].push(selectedItem);
         }
     }
@@ -180,3 +172,7 @@ class StundenplanFeed extends Polymer.Element {
 
 }
 window.customElements.define(StundenplanFeed.is, StundenplanFeed);
+
+function includes(array, item, func) {
+    return array.reduce((acc, otherItem) => acc || (func(otherItem) === func(item)), false);
+}

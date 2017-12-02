@@ -9,6 +9,11 @@ class StundenplanSettings extends Polymer.Element {
                     "V", "W", "Y", "Z"
                 ]
             },
+            //@me Jürgen wollte zebra für close event impressum ding
+            zebra:{
+                type: Boolean,
+                value: true
+            },
             course: {
                 type: String,
                 observer: "feedChanged"
@@ -90,6 +95,9 @@ class StundenplanSettings extends Polymer.Element {
     }
     reset() {
         this.dispatchEvent(new CustomEvent("reset"));
+    }
+    hideshowImpressum(){
+        this.zebra = !this.zebra;
     }
 
 }

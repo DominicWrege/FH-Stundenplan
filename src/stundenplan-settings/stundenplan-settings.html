@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 
 <dom-module id="stundenplan-settings">
     <template>
@@ -26,8 +27,10 @@
                 grid-template-columns: 50px auto;
                 margin-bottom: 18px;
             }
-            paper-button{
+            paper-button[raised] {
                 background-color: var(--paper-grey-200);
+            }
+            paper-button {
                 margin-top: 16px;
             }
             #close-btn{
@@ -59,38 +62,45 @@
                 }
             }
         </style>
-        <h2>Einstellungen</h2>
-        <paper-dropdown-menu id="studiengang" label="Studiengang">
-            <paper-listbox id="courseMenu" 
-                            slot="dropdown-content" 
-                            selected="{{course}}" 
-                            attr-for-selected="value">
-                <template is="dom-repeat" items="[[handleResponse(responseRaw)]]" as="courses">
-                    <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade">
-                        <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">
-                            {{courses.name}} {{itemGrade.grade}}
-                        </paper-item>
-                    </template>
-                </template>
-        </paper-listbox>
-        </paper-dropdown-menu>
-        <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
-            <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
-                <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
-                        <paper-item value="{{item}}">{{item}}</paper-item>
+        <template is="dom-if" if="{{zebra}}">
+            <h2>Einstellungen</h2>
+            <paper-dropdown-menu id="studiengang" label="Studiengang">
+                <paper-listbox id="courseMenu" 
+                                slot="dropdown-content" 
+                                selected="{{course}}" 
+                                attr-for-selected="value">
+                    <template is="dom-repeat" items="[[handleResponse(responseRaw)]]" as="courses">
+                        <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade">
+                            <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">
+                                {{courses.name}} {{itemGrade.grade}}
+                            </paper-item>
+                        </template>
                     </template>
             </paper-listbox>
-        </paper-dropdown-menu>
-        <iron-label>
-            <paper-toggle-button id="filterByGroup" checked="{{group}}"></paper-toggle-button>
-            Nach Gruppenbuchstabe filtern
-        </iron-label>
-        <iron-label>
-            <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
-            QDL's anzeigen
-        </iron-label>
-        <paper-button id="reset-btn" on-tap="reset">Stundenplan zurücksetzen</paper-button>
-        <paper-button id="close-btn" on-tap="close">Schließen</paper-button>
+            </paper-dropdown-menu>
+            <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
+                <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
+                    <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
+                            <paper-item value="{{item}}">{{item}}</paper-item>
+                        </template>
+                </paper-listbox>
+            </paper-dropdown-menu>
+            <iron-label>
+                <paper-toggle-button id="filterByGroup" checked="{{group}}"></paper-toggle-button>
+                Nach Gruppenbuchstabe filtern
+            </iron-label>
+            <iron-label>
+                <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
+                QDL's anzeigen
+            </iron-label>
+            <paper-button raised id="reset-btn" on-tap="reset">Stundenplan zurücksetzen</paper-button>
+            <paper-button raised id="close-btn" on-tap="close">Schließen</paper-button>
+            <br>
+            <paper-button on-tap="hideshowImpressum">Impressum</paper-button>
+        </template> 
+        <template is="dom-if" if="{{!zebra}}">
+            <stundenplan-impressum status="{{zebra::close}}"></stundenplan-impressum>
+        </template>
         <iron-ajax id="ajax" auto url="[[url]]" params='{"Accept": "application/json"}' handle-as="json" last-response="{{responseRaw}}">
         </iron-ajax>
     </template>

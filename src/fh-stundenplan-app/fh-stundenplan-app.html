@@ -54,24 +54,6 @@
                     top: 8%;
                 }
             }
-            .impressum-button{
-                background-color: var(--paper-grey-200);
-            }
-            #show-impressum-button{
-                margin-left: 28px;
-                padding: 8px;
-            }
-            #close-impressum-button{
-                margin: 0;
-            }
-            #impressDialog{
-                width: 226px;
-                text-align: center;
-            }
-            /* skeleton-carousel {
-                height: 100%;           
-            } */
-
         </style>
         <paper-dialog id="settingsDialog">
             <stundenplan-settings id="settings" 
@@ -81,19 +63,7 @@
                                 url="[[baseFeedUrl]]" 
                                 on-filter="handleFilterEvent">
             </stundenplan-settings>
-            <paper-button id="show-impressum-button" class="impressum-button" on-tap="showImpressumDialog">Impressum</paper-button>
-        </paper-dialog>
-        <paper-dialog id="impressumDialog">
-            <div>
-                <h2>Impressum</h2>
-                <p>Dominic Wrege</p>
-                <p>Combrinkstr.8</p>
-                <p>59229 Ahlen</p>
-                <p>wrege@domi-me.de</p>
-                <p>02388/3701</p>
-                <paper-button on-tap="closeImpressum" id="close-impressum-button" class="impressum-button">Schließen</paper-button>
-            </div>
-        </paper-dialog>      
+        </paper-dialog>    
         <app-header-layout has-scrolling-region fullbleed>
             <app-header slot="header" effects="waterfall" fixed>
                 <app-toolbar>

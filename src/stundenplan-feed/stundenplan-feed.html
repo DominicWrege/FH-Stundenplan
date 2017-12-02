@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <dom-module id="stundenplan-feed">
 
     <template>
@@ -58,7 +58,7 @@
         <!-- <iron-list id="liste" scroll-target="document" > -->
         <template is="dom-repeat" items="[[filter(listItems)]]" as="item">
             <paper-material elevation="1">
-                 <paper-checkbox data="[[item]]" on-click="newItemChecked" hidden$="{{!inEditMode}}"></paper-checkbox> 
+                 <paper-checkbox data="[[item]]" on-tap="newItemChecked" hidden$="{{!inEditMode}}"></paper-checkbox> 
                 <table>
                     <tr>
                         <td><b>[[item.courseType]] [[item.name]]</b></td>
@@ -72,9 +72,15 @@
                 </table>
             </paper-material>
         </template>
-    <paper-toast id="toast" text="Bitte einen Eintrag auswählen"></paper-toast>
     <!-- </iron-list> -->
-    <paper-fab icon="edit" id="editFab" on-tap="editMode"></paper-fab>
+        <template is="dom-if" if="{{!inEditMode}}">
+            <paper-fab icon="edit" id="editFab" on-tap="editMode"></paper-fab>
+        </template>
+        <template is="dom-if" if="{{inEditMode}}">
+            <paper-fab icon="save" id="saveButton" on-tap="saveItems"></paper-fab>
+        </template>
+    </template>
+  
     </template>
     <script src="weekEvents.js"></script>
     <script src="myFilter.js"></script>
