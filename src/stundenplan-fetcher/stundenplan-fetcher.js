@@ -50,9 +50,9 @@ class StundenplanFetcher extends Polymer.Element {
     ready() {
         super.ready();
 
-        Polymer.RenderStatus.afterNextRender(this, function() {
+        // Polymer.RenderStatus.afterNextRender(this, function() {
             
-        });
+        // });
     }
 
 }

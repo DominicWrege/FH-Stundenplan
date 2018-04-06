@@ -30,7 +30,6 @@
             paper-checkbox{
                 margin-right: 20px;
                 margin-left: 15px;
-                /* --paper-checkbox-checked-color: var(--paper-red-500); */
                 --paper-checkbox-size: 23px;
             }   
             paper-fab{
@@ -40,7 +39,7 @@
                 --paper-fab-background: #F44336;
                 
             } 
-             paper-fab:focus {
+            paper-fab:focus {
                 background: #F44336;
             } 
 
@@ -52,13 +51,12 @@
                     right: 7%;
                     bottom: 7%;
                 }
-
             }
         </style>
         <!-- <iron-list id="liste" scroll-target="document" > -->
-        <template is="dom-repeat" items="[[filter(listItems)]]" as="item">
+        <template is="dom-repeat" items="[[filter(listItems)]]" as="item" sort="sortbyTime">
             <paper-material elevation="1">
-                 <paper-checkbox data="[[item]]" on-tap="newItemChecked" hidden$="{{!inEditMode}}"></paper-checkbox> 
+                <paper-checkbox data="[[item]]" on-tap="newItemChecked" hidden$="{{!inEditMode}}"></paper-checkbox> 
                 <table>
                     <tr>
                         <td><b>[[item.courseType]] [[item.name]]</b></td>
@@ -76,11 +74,9 @@
         <template is="dom-if" if="{{!inEditMode}}">
             <paper-fab icon="edit" id="editFab" on-tap="editMode"></paper-fab>
         </template>
-        <template is="dom-if" if="{{inEditMode}}">
-            <paper-fab icon="save" id="saveButton" on-tap="saveItems"></paper-fab>
+        <template id="blaaa" is="dom-if" if="{{inEditMode}}">
+            <paper-fab icon="save" id="saveFab" on-tap="saveItems"></paper-fab>
         </template>
-    </template>
-  
     </template>
     <script src="weekEvents.js"></script>
     <script src="myFilter.js"></script>

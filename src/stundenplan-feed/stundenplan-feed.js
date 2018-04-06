@@ -8,10 +8,8 @@ class StundenplanFeed extends Polymer.Element {
                 notify: true,
                 reflectToAttribute: true
             },
-            weekDay: {
-                type: String,
-                // observer: "weekDayChanged"
-            },
+            
+            weekDay: String,
             tmpSavedItems: Object,
             listItems: {
                 type: Array,
@@ -51,7 +49,6 @@ class StundenplanFeed extends Polymer.Element {
             });
         }
     }
-
     loadFromCache(){
         if (localStorage.savedEvents != null) {
             let cachedEvents = JSON.parse(localStorage.savedEvents);
@@ -95,12 +92,8 @@ class StundenplanFeed extends Polymer.Element {
                 this.unckeckAll();
                 this.reset();
             } else {
-                // To set listeItems this to null works better =/ js why?!
                 if (!this.loadFromCache()) {
-                    let tempData = [];
-                    tempData = this.listItems;
-                    this.set("listItems", []);
-                    this.set("listItems", tempData);
+                    this.listItems = this.listItems.slice();
                 } else {
                     this.reset();
                 }
@@ -126,13 +119,11 @@ class StundenplanFeed extends Polymer.Element {
                     .filter(item => 
                         !includes(this.tmpSavedItems[this.weekDay], item, item => item.courseId))
                     .concat(this.tmpSavedItems[this.weekDay]);
-                localStorage.savedEvents = JSON.stringify(this.tmpSavedItems);
+                oldEvents[this.weekDay] = this.tmpSavedItems[this.weekDay];
+                localStorage.savedEvents = JSON.stringify(oldEvents);
             } else {
                 localStorage.savedEvents = JSON.stringify(this.tmpSavedItems);
             }
-            this.tmpSavedItems[this.weekDay].sort((a, b) => {
-                return a.timestampBegin - b.timestampBegin;
-            });
             this.set("listItems", this.tmpSavedItems[this.weekDay]);
             this.tmpSavedItems[this.weekDay] = [];
         }else{
@@ -144,7 +135,7 @@ class StundenplanFeed extends Polymer.Element {
     newItemChecked(event) {
         let selectedItem = event.model.item;
         //uncheck
-        if (event.target.checked) {
+        if (!event.target.checked) {
             let index = this.tmpSavedItems[this.weekDay].indexOf(selectedItem);
             this.tmpSavedItems[this.weekDay].splice(index, 1);
         } else{
@@ -161,15 +152,10 @@ class StundenplanFeed extends Polymer.Element {
             }
         });
     }
-    // savedCheckedItems() {
-    //     let liste = this.shadowRoot.querySelectorAll('paper-material paper-checkbox');
-    //     liste.forEach((item) => {
-    //         if (item.checked && this.tmpSavedItems[this.weekDay].indexOf(item.data) == -1) {
-    //             this.tmpSavedItems[this.weekDay].push(item.data);
-    //         }
-    //     });
-    // }
-
+    sortbyTime(a,b){
+        return a.timestampBegin - b.timestampBegin;
+    }
+ 
 }
 window.customElements.define(StundenplanFeed.is, StundenplanFeed);
 

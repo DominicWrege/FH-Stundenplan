@@ -1,16 +1,4 @@
- @font-face {
-     font-family: 'Roboto';
-     src: url("Roboto/Roboto-Regular.ttf");
-     font-weight: normal;
- }
- 
- @font-face {
-     font-family: 'Robto';
-     src: url("Roboto/Roboto-Bold.ttf");
-     font-weight: bold;
- }
- 
- body {
+body {
      margin: 0;
      font-family: "Roboto", "Noto","Helvetica Neue", "Helvetica", sans-serif;
      line-height: 1.5;
