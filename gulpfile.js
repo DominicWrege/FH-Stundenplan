@@ -1,9 +1,12 @@
-const gulp = require("gulp")
+const gulp = require("gulp");
 const vulcanize = require("gulp-vulcanize");
-const uglify = require("gulp-uglify");
+// const uglify = require("gulp-uglify");
 const del = require('del');
 const swPrecache = require("sw-precache");
 const replace = require("gulp-replace");
+const crisper = require("gulp-crisper");
+const shell = require("gulp-shell")
+const htmlmin = require("gulp-htmlmin");
 // const removeHtmlComments = require("gulp-remove-html-comments");
 
 const removeComments = require('gulp-strip-comments');
@@ -11,6 +14,7 @@ const srcPath = "src/";
 
 const srcIndexFile = "index.html";
 const publicFolder = "public";
+const sw_WorkerFile = "service-worker.js";
 
 
 gulp.task("build:clean", () => {
@@ -27,12 +31,13 @@ gulp.task("build:copyToPublic", ["build:clean"], (callback) => {
 });
 
 gulp.task("build:generateSW", ["build:remove-comments"], (callback) => {
-    swPrecache.write("public/service-worker.js", {
+    swPrecache.write(`${publicFolder}/${sw_WorkerFile}`, {
         staticFileGlobs: [
-            publicFolder + "/index.html",
-            publicFolder + "/manifest.json",
-            publicFolder + "/icons/*.*",
-            publicFolder + "/Roboto/*.ttf"
+            `${publicFolder}/${srcIndexFile}`,
+            `${publicFolder}/index.js`,
+            `${publicFolder}/manifest.json`,
+            `${publicFolder}/icons/*.*`,
+            `${publicFolder}/Roboto/*.ttf`
         ],
         path: publicFolder,
         verbose: true,
@@ -43,21 +48,16 @@ gulp.task("build:generateSW", ["build:remove-comments"], (callback) => {
                 name: "api-cache"
             }
         }]
-    }, callback).then(() => {
-        gulp.src(publicFolder + "/service-worker.js")
-            .pipe(uglify())
-            .pipe(replace(publicFolder, ""))
-            .pipe(gulp.dest(publicFolder));
-    });
+    }, callback);
 });
 
 gulp.task("build:remove-comments", ["build:vulcanize"], (callback) => {
-    return gulp.src("public/index.html")
+    return gulp.src(`${publicFolder}/${srcIndexFile}`)
         .pipe(removeComments())
-        .pipe(gulp.dest("public"));
+        .pipe(gulp.dest(publicFolder));
 });
 
-gulp.task("build:copySafariJS",["build:remove-comments"], () =>{
+gulp.task("build:copySafariJS", ["build:remove-comments"], () => {
     return gulp.src("safari-js/*.map").pipe(gulp.dest("public"));
 });
 
@@ -69,16 +69,27 @@ gulp.task("build:vulcanize", ["build:copyToPublic"], () => {
             inlineCss: true,
             stripComments: true
         }))
+        .pipe(crisper())
         .pipe(replace('src/style/Roboto/Roboto', 'Roboto/Roboto'))
         .pipe(gulp.dest(publicFolder));
 });
 
+gulp.task("build:minify-html", ["build:generateSW"], () =>{
+    return gulp.src(`${publicFolder}/${srcIndexFile}`)
+            .pipe(htmlmin({collapseWhitespace: true, minifyCSS:true}))
+            .pipe(gulp.dest(publicFolder));
+});
+
+gulp.task("build:minify-index-js", ["build:generateSW"], shell.task(`./node_modules/.bin/uglifyjs --compress --mangle -o ${publicFolder}/index.js --warnings false -- ${publicFolder}/index.js`));
+gulp.task("build:minify-sw-worker-js", ["build:generateSW"], shell.task(`./node_modules/.bin/uglifyjs --compress --mangle -o ${publicFolder}/${sw_WorkerFile} --warnings false -- ${publicFolder}/${sw_WorkerFile}`));
+
+
+gulp.task("build:remove-string-sw-worker", ["build:minify-sw-worker-js"], () => {
+    gulp.src(`${publicFolder}/${sw_WorkerFile}`)
+            .pipe(replace(publicFolder, ""))
+            .pipe(gulp.dest(publicFolder));
+});
 
 gulp.task("default", ["watch"]);
-gulp.task("build", ["build:clean", "build:copyToPublic", "build:vulcanize","build:remove-comments", "build:copySafariJS" ,"build:generateSW"]);
-
-//  "build:copyToPublic", "build:generateSW"
-// gulp.task("watch", () => {
-//     //gulp.watch(["index.html", "src/**/*.html", "src/**/*.js", "src/style.css"], ["vulcanize"]);
-//     // gulp.watch("public/index.html", ["generateSW"]);
-// });
+gulp.task("build", ["build:clean", "build:copyToPublic", "build:vulcanize", "build:remove-comments", 
+                    "build:copySafariJS", "build:generateSW","build:minify-index-js", "build:minify-sw-worker-js", "build:remove-string-sw-worker", "build:minify-html"]);
