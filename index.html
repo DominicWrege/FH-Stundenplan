@@ -30,8 +30,10 @@
     <link rel="stylesheet" href="src/style/roboto.css">
 
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="src/fh-stundenplan-app/fh-stundenplan-app.html">
  
-    <link rel="import" href="src/elements.html">
+    <!-- <link rel="import" href="src/elements.html"> -->
     <!-- google -->
     <meta name="robots" content="noindex"> 
     <meta name="googlebot" content="noindex">   
@@ -41,16 +43,7 @@
 <body>
     <!--googleoff: index-->
     <fh-stundenplan-app id="app"></fh-stundenplan-app>
+    <script src="index.js"></script>
 </body>
-<script>
-    //Load pre-caching Service Worker
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", function() {
-            navigator.serviceWorker.register("service-worker.js", {
-                scope: "/",
-            });
-        });
-    }
-</script>
 
 </html>

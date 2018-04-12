@@ -1,16 +1,18 @@
 module.exports = {
     staticFileGlobs: [
-        'index.html',
-        'manifest.json',
-        'icons/*.*'
+        "src/**/*.{js,html,css,ttf}",
+        "icons/*.{png,svg,ico}",
+        "bower_components/**",
+        "manifest.json",
+        "index.html",
+        "index.js",
+        "service-worker.js"
     ],
-    path: 'public',
-    verbose: true,
     runtimeCaching: [{
         urlPattern: /ws.inf.fh-dortmund.de/,
-        handler: 'cacheFirst',
+        handler: "cacheFirst",
         options: {
-            name: 'api-cache'
+            name: "api-cache"
         }
     }]
 };
