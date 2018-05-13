@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
 <dom-module id="stundenplan-settings">
     <template>
@@ -12,7 +13,9 @@
                 width: 96%;
                 margin-bottom: 16px;
             }
-
+            h2{
+                -webkit-margin-before: 0.1em;
+            }
             #group {
                 width: 80px;
                 color: #FFF;
@@ -29,9 +32,11 @@
             }
             paper-button[raised] {
                 background-color: var(--paper-grey-200);
+                margin-bottom: 14px;
             }
             paper-button {
                 margin-top: 16px;
+                height: 1.5em;
             }
             #close-btn{
                 float: right;
@@ -44,17 +49,12 @@
             @media(max-width: 410px) {
                 #close-btn{
                     float: left;
-                }
-                #close-btn{
                     margin-bottom: 16px;
-                }  
+                } 
             }
             @media(max-height: 580px){
                 h2{
                     margin-bottom: 0;
-                }
-                paper-button{
-                    height: 29px;
                 }
                 #studiengang{
                    height: 28px;
@@ -62,46 +62,67 @@
                 }
             }
         </style>
-        <template is="dom-if" if="{{zebra}}">
-            <h2>Einstellungen</h2>
-            <paper-dropdown-menu id="studiengang" label="Studiengang">
-                <paper-listbox id="courseMenu" 
-                                slot="dropdown-content" 
-                                selected="{{course}}" 
-                                attr-for-selected="value">
-                    <template is="dom-repeat" items="[[handleResponse(responseRaw)]]" as="courses">
-                        <template is="dom-repeat" items="{{courses.grades}}" as="itemGrade">
-                            <paper-item data="{{itemGrade.grade}}" value="{{courses.key}} {{itemGrade.grade}}">
-                                {{courses.name}} {{itemGrade.grade}}
-                            </paper-item>
-                        </template>
-                    </template>
-            </paper-listbox>
-            </paper-dropdown-menu>
-            <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
-                <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
-                    <template is="dom-repeat" items="{{_allGroupLetters}}" as="item" initial-count="8">
-                        <paper-item value="{{item}}">{{item}}</paper-item>
-                    </template>
+        <dom-if if="{{!impressumVisible}}">
+            <template>
+                <h2>Einstellungen</h2>
+                <paper-dropdown-menu id="studiengang" label="Studiengang">
+                    <paper-listbox id="courseMenu" 
+                                    slot="dropdown-content" 
+                                    selected="{{course}}" 
+                                    attr-for-selected="value">
+                        <dom-repeat items="[[responseRaw]]" as="courses">
+                            <template>  
+                                <dom-if if="{{courses.semester !== null}}">
+                                    <template>
+                                        <dom-repeat items="{{courses.semester}}" as="semester">
+                                            <template>
+                                                <paper-item data="{{semester}}" value="{{courses.courseOfStudy}} {{semester}}">
+                                                    {{courses.name}} {{semester}}
+                                                </paper-item>
+                                            </template> 
+                                        </dom-repeat>
+                                    </template>
+                                </dom-if>
+                                <dom-if if="{{courses.semester === null}}">
+                                    <template>
+                                        <paper-item data="{{semester}}" value="{{courses.courseOfStudy}}">
+                                            {{courses.name}}
+                                        </paper-item>
+                                    </template>
+                                </domi-if>
+                            </template>
+                        </dom-repeat>
                 </paper-listbox>
-            </paper-dropdown-menu>
-            <iron-label>
-                <paper-toggle-button id="filterByGroup" checked="{{group}}"></paper-toggle-button>
-                Nach Gruppenbuchstabe filtern
-            </iron-label>
-            <iron-label>
-                <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
-                QDL's anzeigen
-            </iron-label>
-            <paper-button raised id="reset-btn" on-tap="reset">Stundenplan zurücksetzen</paper-button>
-            <paper-button raised id="close-btn" on-tap="close">Schließen</paper-button>
-            <br>
-            <paper-button on-tap="hideshowImpressum">Impressum</paper-button>
-        </template> 
-        <template is="dom-if" if="{{!zebra}}">
-            <stundenplan-impressum status="{{zebra::close}}"></stundenplan-impressum>
-        </template>
-        <iron-ajax id="ajax" auto url="[[url]]" params='{"Accept": "application/json"}' handle-as="json" last-response="{{responseRaw}}">
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="gruppenbuchstabe" label="Gruppenbuchstabe">
+                    <paper-listbox slot="dropdown-content" id="groupLetterMenu" selected="{{groupLetter}}" attr-for-selected="value">
+                        <dom-repeat items="{{_allGroupLetters}}" as="item" initial-count="8">
+                            <template>
+                                <paper-item value="{{item}}">{{item}}</paper-item>
+                            </template>
+                        </dom-repeat>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <iron-label>
+                    <paper-toggle-button id="filterByGroup" checked="{{group}}"></paper-toggle-button>
+                    Nach Gruppenbuchstabe filtern
+                </iron-label>
+                <iron-label>
+                    <paper-toggle-button id="qdlButton" checked="{{qdl}}"></paper-toggle-button>
+                    QDL's anzeigen
+                </iron-label>
+                <paper-button raised id="reset-btn" on-tap="reset">Stundenplan zurücksetzen</paper-button>
+                <paper-button raised id="close-btn" on-tap="close">Schließen</paper-button>
+                <br>
+                <paper-buttons on-tap="hideShowImpressum">Impressum</paper-button>
+            </template> 
+        </dom-if>
+        <dom-if if="{{impressumVisible}}">
+            <template>
+                <stundenplan-impressum status="{{impressumVisible::close}}"></stundenplan-impressum>
+            </template>
+        </dom-if>
+        <iron-ajax id="ajax" auto url="[[url]]/courses" handle-as="json" last-response="{{responseRaw}}">
         </iron-ajax>
     </template>
     <script src="stundenplan-settings.js"></script>

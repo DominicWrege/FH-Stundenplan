@@ -1,23 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 <dom-module id="stundenplan-feed">
-
     <template>
         <style>
              :host {
                 display: block;
                 font-size: smaller;
-                margin: 0 auto;
-                margin-top: 3%;
-                margin-bottom: 5%;
-                width: 100%;
-                max-width: 720px;
             }
-
             span {
                 padding-left: 7px;
             }
-
             paper-material {
                 display: block;
                 padding: 16px;
@@ -53,24 +46,24 @@
                 }
             }
         </style>
-        <!-- <iron-list id="liste" scroll-target="document" > -->
-        <template is="dom-repeat" items="[[filter(listItems)]]" as="item" sort="sortbyTime">
-            <paper-material elevation="1">
-                <paper-checkbox data="[[item]]" on-tap="newItemChecked" hidden$="{{!inEditMode}}"></paper-checkbox> 
-                <table>
-                    <tr>
-                        <td><b>[[item.courseType]] [[item.name]]</b></td>
-                    </tr>
-                    <tr>
-                        <td>[[item.timeBegin]] - [[item.timeEnd]] <span></span>| <span>[[item.roomId]]</span></td>
-                    </tr>
-                    <tr>
-                        <td>[[item.studentSet]] <span></span>| <span>[[item.lecturerName]]</span></td>
-                    </tr>
-                </table>
-            </paper-material>
-        </template>
-    <!-- </iron-list> -->
+        <dom-repeat items="[[filter(listItems)]]" as="item" sort="sortbyTime">
+            <template>
+                <paper-material elevation="1">
+                    <paper-checkbox data="[[item]]" on-tap="newItemChecked" hidden$="{{!inEditMode}}"></paper-checkbox> 
+                    <table>
+                        <tr>
+                            <td><b>[[item.courseType]] [[item.name]]</b></td>
+                        </tr>
+                        <tr>
+                            <td>[[item.timeBegin]] - [[item.timeEnd]] <span></span>| <span>[[item.roomId]]</span></td>
+                        </tr>
+                        <tr>
+                            <td>[[item.studentSet]] <span></span>| <span>[[item.lecturerName]]</span></td>
+                        </tr>
+                    </table>
+                </paper-material>
+            </template>
+        </dom-repeat>
         <template is="dom-if" if="{{!inEditMode}}">
             <paper-fab icon="edit" id="editFab" on-tap="editMode"></paper-fab>
         </template>

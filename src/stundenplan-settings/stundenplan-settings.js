@@ -9,10 +9,9 @@ class StundenplanSettings extends Polymer.Element {
                     "V", "W", "Y", "Z"
                 ]
             },
-            //@me Jürgen wollte zebra für close event impressum ding
-            zebra:{
+            impressumVisible:{
                 type: Boolean,
-                value: true
+                value: false
             },
             course: {
                 type: String,
@@ -42,19 +41,18 @@ class StundenplanSettings extends Polymer.Element {
     };
     constructor() {
         super();
-        if (localStorage.course != null)
+        if (localStorage.course != null){
             this.course = localStorage.course;
-
-        if (localStorage.groupLetter != null)
+        }
+        if (localStorage.groupLetter != null){
             this.groupLetter = localStorage.groupLetter;
-
+        }
         if (localStorage.group == "true") {
             this.group = true;
         }
         if (localStorage.qdl == "true") {
             this.qdl = true;
         }
-
     }
     filterChanged() {
         if (this.course != null && this.groupLetter != null) {
@@ -71,7 +69,7 @@ class StundenplanSettings extends Polymer.Element {
         }
     }
     feedChanged() {
-        if (this.course != null) {
+        if (this.course !== null) {
             localStorage.course = this.course;
             this.dispatchEvent(new CustomEvent("feed", {
                 detail: {
@@ -80,25 +78,14 @@ class StundenplanSettings extends Polymer.Element {
             }));
         }
     }
-    handleResponse(data) {
-        if (data != null) {
-            let arrValues = Object.values(data);
-            let arrKeys = Object.keys(data);
-            for (let i in arrValues)
-                arrValues[i].key = arrKeys[i];
-
-            return arrValues;
-        }
-    }
     close() {
         this.dispatchEvent(new CustomEvent("close"));
     }
     reset() {
         this.dispatchEvent(new CustomEvent("reset"));
     }
-    hideshowImpressum(){
-        this.zebra = !this.zebra;
+    hideShowImpressum(){
+        this.impressumVisible = !this.impressumVisible;
     }
-
 }
 window.customElements.define(StundenplanSettings.is, StundenplanSettings);

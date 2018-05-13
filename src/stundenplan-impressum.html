@@ -37,7 +37,7 @@
                 }
             };
             closeImpressum(){
-                this.status = true;
+                this.status = false;
                 this.dispatchEvent(new CustomEvent('close', {
                 detail: {
                     status: this.status

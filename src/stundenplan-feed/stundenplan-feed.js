@@ -36,7 +36,7 @@ class StundenplanFeed extends Polymer.Element {
         this.filterBy = new MyFilter();
     }
     filter(items) {
-        if (items != null) {
+        if (items !== null) {
             return items.filter(item => {
                 if (!this.filterBy.group && !this.filterBy.qdl)
                     return item.name.indexOf("QdL") == -1;
@@ -50,7 +50,7 @@ class StundenplanFeed extends Polymer.Element {
         }
     }
     loadFromCache(){
-        if (localStorage.savedEvents != null) {
+        if (localStorage.savedEvents !== undefined) {
             let cachedEvents = JSON.parse(localStorage.savedEvents);
             if(cachedEvents[this.weekDay].length > 0){
                 this.listItems = cachedEvents[this.weekDay];
@@ -71,7 +71,7 @@ class StundenplanFeed extends Polymer.Element {
     checkGroup(userGroupLetter, rangeGroupLetter) {
             let letters = rangeGroupLetter.split("-");
             let firstLetter = letters[0].substring(0, 1);
-            if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
+            if (rangeGroupLetter.indexOf(userGroupLetter) !== -1) {
                 return true;
             } else if (letters[1] == null) {
                 return false;
@@ -113,7 +113,7 @@ class StundenplanFeed extends Polymer.Element {
     saveItems(){
         if (this.tmpSavedItems[this.weekDay].length > 0) {
             this.set("listItems", []);
-            if (localStorage.savedEvents != null) {
+            if (localStorage.savedEvents !== null) {
                 let oldEvents = JSON.parse(localStorage.savedEvents);
                 this.tmpSavedItems[this.weekDay] = oldEvents[this.weekDay]
                     .filter(item => 

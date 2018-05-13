@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<!-- <link rel="import" href="../../bower_components/polymer/polymer.html"> -->
 <link rel="import" href="../elements.html">
 
 <dom-module id="fh-stundenplan-app">
@@ -19,12 +18,28 @@
             }
 
             paper-tabs {
-                width: 100%;
                 max-width: 750px;
                 margin: 0 auto;
             }
+            paper-tabs, iron-pages stundenplan-feed{
+                width: 100%;
+            }
+            iron-pages stundenplan-feed{
+                margin-bottom: 5%;
+            }
+            iron-pages paper-material {
+                display: block;
+                padding: 16px;
+                background-color: #fff;
+                width: 85%;
+              
+            }
+            iron-pages stundenplan-feed, iron-pages paper-material{
+                margin: 3% auto;
+                max-width: 720px;
+            }
 
-            paper-tabs paper-tab {
+            paper-tabs {
                 min-width: 54px;
             }
 
@@ -36,85 +51,72 @@
                 app-toolbar {
                     height: 52px;
                 }
-                paper-dialog {
-                    max-width: 420px;
-                }
-            }
-            paper-dialog{
-                position: absolute;
-                min-height: 320px;
-                max-width: 550px;
-                min-width: 200px;
-                left: 2%;
-                top: 17%;
-                right: 2%;
-                margin-right: auto;
-                margin-left: auto;
-            }
-            @media (max-height: 575px){
-                paper-dialog{
-                    top: 8%;
+                iron-pages paper-material{
+                    width: 90%;
                 }
             }
         </style>
-        <paper-dialog id="settingsDialog">
-            <stundenplan-settings id="settings" 
-                                on-close="handleCloseEvent"
-                                on-feed="handleFeedEvent"
-                                on-reset="handleResetEvent" 
-                                url="[[baseFeedUrl]]" 
-                                on-filter="handleFilterEvent">
-            </stundenplan-settings>
-        </paper-dialog>    
         <app-header-layout has-scrolling-region fullbleed>
             <app-header slot="header" effects="waterfall" fixed>
                 <app-toolbar>
                     <div main-title>FH-Stundenplan</div>
                     <paper-icon-button on-click="showSettings" icon="settings"></paper-icon-button>
                 </app-toolbar>
-                <paper-tabs id="tabs" autoselect-delay="0" selected="{{day}}" 
+                <paper-tabs id="tabs" auto-select-delay="0" selected="{{page}}" 
                             no-slide autoselect hide-scroll-buttons="true" 
                             scrollable fit-container="true"
-                            attr-for-selected="day">
-                    <paper-tab day="Mon">Montag</paper-tab>
-                    <paper-tab day="Tue">Dienstag</paper-tab>
-                    <paper-tab day="Wed">Mittwoch</paper-tab>
-                    <paper-tab day="Thu">Donnerstag</paper-tab>
-                    <paper-tab day="Fri"> Freitag</paper-item>
+                            attr-for-selected="page">
+                    <paper-tab page="0" day="Mon">Montag</paper-tab>
+                    <paper-tab page="1" day="Tue">Dienstag</paper-tab>
+                    <paper-tab page="2" day="Wed">Mittwoch</paper-tab>
+                    <paper-tab page="3" day="Thu">Donnerstag</paper-tab>
+                    <paper-tab page="4" day="Fri">Freitag</paper-tab>
                 </paper-tabs>
             </app-header>
-                <iron-pages id="pages" selected="{{day}}" attr-for-selected="week-day">
-                    <stundenplan-fetcher 
-                        sorted-events="{{data}}" 
-                        feed-events-url="[[feedEventsUrl]]">
-                    </stundenplan-fetcher>
-
+                <stundenplan-fetcher 
+                    response="{{data}}" 
+                    feed-events-url="[[feedEventsUrl]]">
+                </stundenplan-fetcher>
+                <iron-pages id="pages" selected="{{page}}" attr-for-selected="page">
                     <stundenplan-feed 
-                        list-original="[[data.Mon]]"
+                        list-original="[[data.mon]]"
                         filter-by="{{filterBy}}"
-                        week-day="Mon">
+                        week-day="mon"
+                        page="0">
                     </stundenplan-feed>
                     <stundenplan-feed 
-                        list-original="[[data.Tue]]"
+                        list-original="[[data.tue]]"
                         filter-by="{{filterBy}}" 
-                        week-day="Tue">
+                        week-day="tue"
+                        page="1">
                     </stundenplan-feed>
                     <stundenplan-feed 
-                        list-original="[[data.Wed]]"
+                        list-original="[[data.wed]]"
                         filter-by="{{filterBy}}" 
-                        week-day="Wed">
+                        week-day="wed"
+                        page="2">
                     </stundenplan-feed>
                     <stundenplan-feed
-                        list-original="[[data.Thu]]"
+                        list-original="[[data.thu]]"
                         filter-by="{{filterBy}}" 
-                        week-day="Thu">
+                        week-day="thu"
+                        page="3">
                     </stundenplan-feed>
                     <stundenplan-feed 
-                        list-original="[[data.Fri]]"
+                        list-original="[[data.fri]]"
                         filter-by="{{filterBy}}" 
-                        week-day="Fri">
+                        week-day="fri"
+                        page="4">
                     </stundenplan-feed>
-                    
+                    <paper-material page="5">
+                        <stundenplan-settings id="settings" 
+                            on-close="closeSettings"
+                            on-feed="handleFeedEvent"
+                            on-reset="closeSettings"
+                            url="[[baseFeedUrl]]" 
+                            on-filter="handleFilterEvent">
+                        </stundenplan-settings>
+                    </paper-material>
                 </iron-pages>
         </app-header-layout>
     </template>

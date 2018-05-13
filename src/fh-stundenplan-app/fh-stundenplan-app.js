@@ -8,65 +8,77 @@ class FhStundenplanApp extends Polymer.Element {
             },
             baseFeedUrl: {
                 type: String,
-                value: "https://ws.inf.fh-dortmund.de/timetable/current/rest/CourseOfStudy/"
-            }
+                value: "https://api.fhstundenplan.de"
+            },
+            lastSelectedDay: Number
+
         };
     }
-
     connectedCallback() {
         super.connectedCallback();
-        Polymer.RenderStatus.afterNextRender(this, function() {
-            if (localStorage.feedEventsUrl == null) {
-                this.$.settingsDialog.open();
-            }
-            let toDay = new Date();
+        const toDay = new Date();
+        this.lastSelectedDay = toDay.getDay() - 1;  
+        Polymer.RenderStatus.afterNextRender(this, () => {
             if (toDay.getDay() == 0 || toDay.getDay() == 6) {
-                this.$.tabs.selected = "Mon";
+                this.$.tabs.selected = 0;
+                this.lastSelectedDay = this.$.tabs.selected;
             } else {
-                this.$.tabs.selected = toDay.toDateString().split(" ")[0];
-            }
+                this.$.tabs.selected = this.lastSelectedDay;
+            }       
+            if (localStorage.feedEventsUrl == null) {
+                this.showSettings();
+            } 
         });
 
         if (localStorage.feedEventsUrl != null) {
             this.feedEventsUrl = localStorage.feedEventsUrl;
         }
-
-    }
-    showImpressumDialog() {
-        this.$.impressumDialog.open();
-        this.$.settingsDialog.close();
     }
     showSettings(){
-        this.$.settingsDialog.open();
+        if (this.$.tabs.selected === 5){
+            this.closeSettings();
+        } else {
+            if (this.$.tabs.selected != undefined){
+                this.lastSelectedDay = this.$.tabs.selected;
+            }
+            this.$.pages.select(5);
+            this.$.tabs.style.visibility = "hidden";
+        }
     }
     closeImpressum(){
-        this.$.impressumDialog.close();
+        this.$.pages.select(0);
     }
     handleFeedEvent(event) {
-        let feedEventsUrl = this.baseFeedUrl + event.detail.course.split(" ")[0] + "/" +
-            event.detail.course.split(" ")[1] + "/Events";
+        console.log(event);
+        // let feedEventsUrl = this.baseFeedUrl + event.detail.course.split(" ")[0] + "/" +
+        //     event.detail.course.split(" ")[1] + "/Events";
+        console.log(event.detail.course);
+        const eventDetail = event.detail.course.split(" ");
+        const courseOfStudy =  eventDetail[0];
+        const semestester = eventDetail[1]
+        let feedEventsUrl = `${this.baseFeedUrl}/events/${courseOfStudy}/${semestester}`;
+        console.log(feedEventsUrl);
         localStorage.feedEventsUrl = feedEventsUrl;
         this.feedEventsUrl = feedEventsUrl;
-        // if (this.$.pages.selectedItem.inEditMode === true) {
-        //     this.$.settingsDialog.close();
-        // }
+        console.log(this.feedEventsUrl);
     }
     handleFilterEvent(event) {
         this.filterBy = event.detail;
     }
-    handleCloseEvent() {
-        this.$.settingsDialog.close();
+    closeSettings() {
+        this.$.settings.impressumVisible = false;
+        this.$.tabs.style.visibility = "visible";
+        this.$.pages.select(this.lastSelectedDay);
     }
     handleResetEvent() {
         if (localStorage.savedEvents != null) {
             let cachedEvents = JSON.parse(localStorage.savedEvents);
             cachedEvents[this.$.pages.selected] = [];
             localStorage.savedEvents = JSON.stringify(cachedEvents);
-            // localStorage.removeItem("savedEvents");
-            this.$.settingsDialog.close();
+            this.closeSettings();
+            //call reset method for the selected day
             this.$.pages.selectedItem.reset();
         }
-
     }
 
 }
