@@ -43,7 +43,16 @@
 <body>
     <!--googleoff: index-->
     <fh-stundenplan-app id="app"></fh-stundenplan-app>
-    <script src="index.js"></script>
+    <script>
+        //csp ready
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register("service-worker.js", {
+                    scope: "/",
+                });
+            });
+        }
+    </script>
 </body>
 
 </html>
