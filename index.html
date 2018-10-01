@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
     <meta name="description" content="Die FH Dortmund Studenplan Web-App. Von Studenten für Studenten.">
     
-    <meta name="theme-color" content="#F44336">
+    <meta name="theme-color" content="#F44336" />
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Stundenplan">
 
@@ -26,13 +26,14 @@
     <link rel="apple-touch-icon" sizes="192x192" href="icons/icon192x192.png">
     
     <!-- style -->
-    <link rel="stylesheet" type="text/css" href="src/style/style.css">
-    <link rel="stylesheet" type="text/css" href="src/style/roboto.css">
+    <link rel="stylesheet" href="src/style/style.css">
+    <link rel="stylesheet" href="src/style/roboto.css">
 
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
-    <script type="module" src="src/fh-stundenplan-app/fh-stundenplan-app.js"></script>
-    <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-
+    <link rel="import" href="src/fh-stundenplan-app/fh-stundenplan-app.html">
+ 
+    <!-- <link rel="import" href="src/elements.html"> -->
     <!-- google -->
     <meta name="robots" content="noindex"> 
     <meta name="googlebot" content="noindex">   
@@ -42,16 +43,7 @@
 <body>
     <!--googleoff: index-->
     <fh-stundenplan-app id="app"></fh-stundenplan-app>
-    <script>
-        //csp ready
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", function() {
-                navigator.serviceWorker.register("service-worker.js", {
-                    scope: "/",
-                });
-            });
-        }
-    </script>
+    <script src="index.js"></script>
 </body>
 
 </html>

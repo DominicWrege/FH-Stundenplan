@@ -1,34 +1,30 @@
 {
-  "name": "fh-stundenplan-web-app",
-  "flat": true,
-  "version": "1.0.0",
-  "main": "index.html",
-  "keywords": [
-    "polymer v3",
-    "fh-dortmund"
-  ],
-  "author": "Dominic Wrege",
-  "license": "ISC",
-  "dependencies": {
-    "@material/mwc-button": "^0.1.1",
-    "@material/mwc-fab": "^0.1.1",
-    "@material/mwc-switch": "^0.1.1",
-    "@polymer/app-layout": "^3.0.0-pre.1",
-    "@polymer/lit-element": "^0.5.1",
-    "@polymer/paper-tabs": "^3.0.0-pre.1",
-    "@polymer/polymer": "^3.0.0-pre.1",
-    "@webcomponents/webcomponentsjs": "^2.0.0"
-  },
-  "bugs": {
-    "url": "https://github.com/DominicWrege/FH-Stundenplan-Web-App/issues"
-  },
-  "scripts": {
-    "build-csp": "./buildcsp.sh"
-  },
-  "homepage": "https://github.com/DominicWrege/FH-Stundenplan-Web-App#readme",
-  "devDependencies": {
-    "crisper": "^2.1.1",
-    "polymer-cli": "^1.7.1",
-    "typescript": "^2.8.3"
-  }
+    "name": "fh-stundenplan-web-app",
+    "version": "1.0.0",
+    "description": "A simple [web app](https://fh-stundenplan.online/) for viewing the schedule for students of the FH Dortmund. It´s completely writting in Polymer v2 and uses the offical [api](http://www.fh-dortmund.de/de/fb/4/lehre/stundenplaene.php) for fetching the necessary data. [live](https://fh-stundenplan.online)",
+    "main": "index.html",
+    "readme": "README.md",
+    "repository": {
+        "type": "git",
+        "url": "git+https://DominicWrege@github.com/DominicWrege/FH-Stundenplan-Web-App.git"
+    },
+    "keywords": [
+        "polymer v2",
+        "fh-dortmund"
+    ],
+    "author": "Dominic Wrege",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/DominicWrege/FH-Stundenplan-Web-App/issues"
+    },
+    "scripts": {
+        "build-csp": "./buildcsp.sh"
+    },
+    "homepage": "https://github.com/DominicWrege/FH-Stundenplan-Web-App#readme",
+    "devDependencies": {
+        "bower": "^1.8.4",
+        "crisper": "^2.1.1",
+        "polymer-cli": "^1.8.0",
+        "typescript": "^2.8.3"
+    }
 }

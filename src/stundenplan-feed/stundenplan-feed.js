@@ -1,106 +1,67 @@
-import { StundenplanPage } from '../stundenplan-page';
-import { html } from '@polymer/lit-element';
-import { WeekEvents } from "./weekEvents";
-import { MyFilter } from "./myFilter";
-import { feedStyle } from "./stundenplan-feed-style";
-import { includes, enumerate } from "../util";
-
-
-class StundenplanFeed extends StundenplanPage {
-    _render({ listItems, inEditMode }) {
-        const htmlEventsList = enumerate(listItems)
-            .filter(([_i, item]) => this.feedFilter(item))
-            .map(([index, item]) => this.renderItem(item, inEditMode, index));
-        return html`
-            ${feedStyle}
-            <section class="paper-list">
-                    ${htmlEventsList}
-            </section>
-            ${this.renderFabs()}
-        `;
-    }
-
+class StundenplanFeed extends Polymer.Element {
     static get is() { return "stundenplan-feed"; }
     static get properties() {
         return {
-            inEditMode: Boolean,
-            weekday: String,
-            listOriginal: Array,
-            filter: Object,
-            listItems: Array
+            inEditMode: {
+                type: Boolean,
+                value: false,
+                notify: true,
+                reflectToAttribute: true
+            },
+            
+            weekDay: String,
+            _tmpSavedItems: Object,
+            listItems: {
+                type: Array,
+                value: []
+            },
+            listOriginal: {
+                type: Array,
+                observer: "itemsLoaded"
+            },
+            filterBy: {
+                type: Object,
+                observer: "reloadList"
+            },
+            loaded: {
+                type:Boolean,
+                value: false
+            }
         }
-    }
+    };
+
     constructor() {
         super();
-        this.inEditMode = false;
-        this.weekday = "mon";
-        this.listItems = [];
-        this._listOriginal = [];
-        this._filterBy = new MyFilter();
-        this._loaded = false;
         this._tmpSavedItems = new WeekEvents();
+        this.filterBy = new MyFilter();
     }
-    set listOriginal(list) {
-        this.listItems = list;
-        this._listOriginal = list;
-    }
-    //just attribute
-    set filter(newFilter) {
-        this._filterBy = newFilter;
-        this._requestRender();
-    }
-    renderItem(item, inEditMode, index) {
-        return html`
-            <card-element>
-                ${ inEditMode ? html`<paper-checkbox data="${index}" on-tap="${(e) => this.newItemChecked(e)}"></paper-checkbox>` : ""}
-                <table>
-                    <tbody>
-                        <tr>
-                            <td><b>${item.courseType} ${item.name}</b></td>
-                        </tr>
-                        <tr>
-                            <td>${item.timeBegin} - ${item.timeEnd} <span></span>| <span>${item.roomId}</span></td>
-                        </tr>
-                        <tr>
-                            <td>${item.studentSet} <span></span>| <span>${item.lecturerName}</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <hr>
-            </card-element>
-        `;
-    }
-    renderFabs() {
-        if (this.inEditMode) {
-            return html`<mwc-fab icon="save" id="saveFab" on-click="${() => this.saveItems()}"></mwc-fab>`;
-        } 
-        return html`<mwc-fab icon="edit" id="editFab" on-click="${() => this.editMode()}"></mwc-fab>`;
-    }
-    feedFilter(item) {
-        if (item !== undefined) {
-            if (!this._filterBy.group && !this._filterBy.qdl)
-                return item.name.indexOf("QdL") == -1;
-            else if (this._filterBy.qdl && this._filterBy.group)
-                return this.checkGroup(this._filterBy.groupLetter, item.studentSet);
-            else if (!this._filterBy.qdl && this._filterBy.group)
-                return this.checkGroup(this._filterBy.groupLetter, item.studentSet) && item.name.indexOf("QdL") == -1;
-            return true;
+    filter(items) {
+        if (items !== null) {
+            return items.filter(item => {
+                if (!this.filterBy.group && !this.filterBy.qdl)
+                    return item.name.indexOf("QdL") == -1;
+                else if (this.filterBy.qdl && this.filterBy.group)
+                    return this.checkGroup(this.filterBy.groupLetter, item.studentSet);
+                else if (!this.filterBy.qdl && this.filterBy.group)
+                    return this.checkGroup(this.filterBy.groupLetter, item.studentSet) && item.name.indexOf("QdL") == -1;
+                else
+                    return true;
+            });
         }
     }
-    loadFromCache() {
+    loadFromCache(){
         if (localStorage.savedEvents !== undefined) {
             let cachedEvents = JSON.parse(localStorage.savedEvents);
-            if (cachedEvents[this.weekday].length > 0) {
-                this.listItems = cachedEvents[this.weekday];
-                return this._loaded = true;
+            if(cachedEvents[this.weekDay].length > 0){
+                this.listItems = cachedEvents[this.weekDay];
+                return this.loaded = true;
             }
         }
         return false;
     }
 
-    itemsLoaded(values) {
+    itemsLoaded(values){
         if (!this.loadFromCache()) {
-            console.log(values);
             this.set("listItems", values);
         }
         if (this.inEditMode) {
@@ -108,81 +69,99 @@ class StundenplanFeed extends StundenplanPage {
         }
     }
     checkGroup(userGroupLetter, rangeGroupLetter) {
-        const letters = rangeGroupLetter.split("-");
-        const firstLetter = letters[0].substring(0, 1);
-        if (rangeGroupLetter.indexOf(userGroupLetter) !== -1) {
-            return true;
-            //change to ===
-        } else if (letters[1] == null) {
-            return false;
-        }
-        const lastLetter = letters[1].substring(0, 1);
-        const firstLetterAscii = firstLetter.charCodeAt(0);
-        const lastLetterAcii = lastLetter.charCodeAt(0);
-        if (typeof (userGroupLetter) === "string") {
-            const userGroupLetterAscii = userGroupLetter.charCodeAt(0);
-            return userGroupLetterAscii >= firstLetterAscii && userGroupLetterAscii <= lastLetterAcii;
-        }
+            let letters = rangeGroupLetter.split("-");
+            let firstLetter = letters[0].substring(0, 1);
+            if (rangeGroupLetter.indexOf(userGroupLetter) != -1) {
+                return true;
+            } else if (letters[1] == null) {
+                return false;
+            }
+            let lastLetter = letters[1].substring(0, 1);
+            let firstLetterAscii = firstLetter.charCodeAt(0);
+            let lastLetterAcii = lastLetter.charCodeAt(0);
+            if(typeof(userGroupLetter) === "string"){
+                let userGroupLetterAscii = userGroupLetter.charCodeAt(0);
+                return userGroupLetterAscii >= firstLetterAscii && userGroupLetterAscii <= lastLetterAcii;
+            }
+        
         return false;
     }
-    reset() {
-        this.listItems = this._listOriginal;
-        //this._requestRender(); maybe
+    reloadList() {
+        if (this.listItems.length > 0){
+            if (this.inEditMode) {
+                this.unckeckAll();
+                this.reset();
+            } else {
+                if (!this.loadFromCache()) {
+                    this.listItems = this.listItems.slice();
+                } else {
+                    this.reset();
+                }
+            }
+        }
+       
+    }
+    reset(){
+        this.set("listItems", []);
+        this.set("listItems", this.listOriginal);
     }
     editMode(event) {
         this.inEditMode = !this.inEditMode;
-        this.listItems = this._listOriginal;
+        this.set("listItems", this.listOriginal);
         this.unckeckAll();
     }
-    saveItems() {
-        if (this._tmpSavedItems[this.weekday].length > 0) {
-            //this.listItems = []; maybe
-            if (localStorage.savedEvents !== undefined) {
+    saveItems(){
+        if (this._tmpSavedItems[this.weekDay].length > 0) {
+            this.set("listItems", []);
+            if (localStorage.savedEvents != null) {
                 let oldEvents = JSON.parse(localStorage.savedEvents);
-                this._tmpSavedItems[this.weekday] = oldEvents[this.weekday]
-                    .filter(item =>
-                        !includes(this._tmpSavedItems[this.weekday], item, item => item.courseId))
-                    .concat(this._tmpSavedItems[this.weekday]);
-                oldEvents[this.weekday] = this._tmpSavedItems[this.weekday];
+                this._tmpSavedItems[this.weekDay] = oldEvents[this.weekDay]
+                    .filter(item => 
+                        !includes(this._tmpSavedItems[this.weekDay], item, item => item.courseId))
+                    .concat(this._tmpSavedItems[this.weekDay]);
+                oldEvents[this.weekDay] = this._tmpSavedItems[this.weekDay];
                 localStorage.savedEvents = JSON.stringify(oldEvents);
             } else {
                 localStorage.savedEvents = JSON.stringify(this._tmpSavedItems);
             }
-            this.listItems = this._tmpSavedItems[this.weekday];
-            this._tmpSavedItems = [];
-        } else {
+            this.set("listItems", this._tmpSavedItems[this.weekDay]);
+            this._tmpSavedItems[this.weekDay] = [];
+        }else{
             this.loadFromCache();
         }
         this.inEditMode = !this.inEditMode;
     }
-
+    
     newItemChecked(event) {
-        const selectedIndex = event.target.data;
-        //check
-        if (event.target.checked) {
-            if (this._tmpSavedItems[this.weekday].indexOf(this.listItems[selectedIndex]) === -1) {
-                console.log(this.listItems[selectedIndex]);
-                this._tmpSavedItems[this.weekday].push(this.listItems[selectedIndex]);
-            }
-        } else {
-            //uncheked
-            const index = this._tmpSavedItems[this.weekday].indexOf(this.listItems[selectedIndex]);
-            this._tmpSavedItems[this.weekday].splice(index, 1);
+        console.log(this.weekDay);
+        let selectedItem = event.model.item;
+        //uncheck
+        if (!event.target.checked) {
+            let index = this._tmpSavedItems[this.weekDay].indexOf(selectedItem);
+            this._tmpSavedItems[this.weekDay].splice(index, 1);
+        } else{
+        //cheked
+            if (this._tmpSavedItems[this.weekDay].indexOf(selectedItem) == -1)
+                this._tmpSavedItems[this.weekDay].push(selectedItem);
         }
+    
+
     }
     unckeckAll() {
-        const liste = this.shadowRoot.querySelectorAll('card-element paper-checkbox');
+        let liste = this.shadowRoot.querySelectorAll('paper-material paper-checkbox');
         liste.forEach((item) => {
             if (item.checked) {
                 item.checked = false;
             }
         });
     }
-    sortbyTime(a, b) {
+    sortbyTime(a,b){
         return a.timestampBegin - b.timestampBegin;
     }
+ 
 }
 window.customElements.define(StundenplanFeed.is, StundenplanFeed);
 
-
-
+function includes(array, item, func) {
+    return array.reduce((acc, otherItem) => acc || (func(otherItem) === func(item)), false);
+}

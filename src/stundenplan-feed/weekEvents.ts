@@ -1,17 +1,17 @@
-export class WeekEvents{
+class WeekEvents{
 
-    mon: object[];
-    tue: object[];
-    wed: object[];
-    thu: object[];
-    fri: object[];
+    Mon: object[];
+    Tue: object[];
+    Wed: object[];
+    Thu: object[];
+    Fri: object[];
 
     constructor(){
-        this.mon = [];
-        this.tue = [];
-        this.wed = [];
-        this.thu = [];
-        this.fri = [];
+        this.Mon = [];
+        this.Tue = [];
+        this.Wed = [];
+        this.Thu = [];
+        this.Fri = [];
     }
 }
 

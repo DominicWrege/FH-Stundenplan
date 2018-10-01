@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="stundenplan-impressum">
+    <template>
+        <style>
+            :host {
+                display: block
+            }
+            div{
+                text-align: center;
+                margin-bottom: 16px;
+            }
+        </style>
+        <h2>Impressum</h2>
+        <div>
+            <p>Dominic Wrege</p>
+            <p>Combrinkstr.8</p>
+            <p>59229 Ahlen</p>
+            <p>wrege@domi-me.de</p>
+            <p>02388/3701</p>
+        </div>
+        <paper-button on-tap="closeImpressum">Zurück</paper-button>
+    </template>
+
+    <script>
+        class StundenplanImpressum extends Polymer.Element {
+            static get is() {
+                return "stundenplan-impressum";
+            }
+            static get properties() {
+                return {
+                    status:{
+                        type: Boolean,
+                        value: true,
+                        notify: true
+                    },
+                }
+            };
+            closeImpressum(){
+                this.status = false;
+                this.dispatchEvent(new CustomEvent('close', {
+                detail: {
+                    status: this.status
+                }
+            }));
+            }
+        }
+
+        window.customElements.define(StundenplanImpressum.is, StundenplanImpressum);
+    </script>
+</dom-module>
