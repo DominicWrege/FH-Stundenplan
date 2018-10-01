@@ -1,14 +1,16 @@
 {
-    "compilerOptions": {
-        "lib": [
+  "compilerOptions": {
+    "lib": [
             "dom",
-            "es5",
-            "scripthost",
-            "es2015.iterable"
+            "es6",
         ],
-        "target": "es5"
-    },
-    "files": [
-        "src/stundenplan-feed/*.ts"
-    ]
+    "module": "es6",
+    "noImplicitReturns": true,
+    "sourceMap": false,
+    "target": "es6"
+  },
+  "compileOnSave": true,
+  "include": [
+    "src/**/*.ts"
+  ]
 }
