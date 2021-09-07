@@ -1,10 +1,8 @@
 # FH Stundenplan Web App
 
-A simple [web app](https://fhstundenplan.de/) for viewing the schedule for students of the FH Dortmund. It´s completely writting in Polymer v2 and uses the offical [api](http://www.fh-dortmund.de/de/fb/4/lehre/stundenplaene.php) for fetching the necessary data.
-[live](https://fhstundenplan.de)    
+A simple [web app](https://fhstundenplan.de/) for viewing the schedule for students of the FH Dortmund. It´s completely writting in Polymer v2 and uses the offical [api](http://www.fh-dortmund.de/de/fb/4/lehre/stundenplaene.php) for fetching the necessary data.   
 
-
-![Demo Image](https://cdn-pro.dprcdn.net/files/acc_503042/1S1SHT)
+[Live Demo](https://fhstundenplan.de)    
  
 
 ## Setup
